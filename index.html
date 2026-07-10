@@ -209,8 +209,42 @@ section{max-width:var(--maxw);margin:0 auto;padding:90px 24px}
 .c-loop{--accent:var(--blue)}
 
 /* ---------- about ---------- */
-.about-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:50px;align-items:start}
-@media(max-width:800px){.about-grid{grid-template-columns:1fr}}
+.about-grid{display:grid;grid-template-columns:auto 1.2fr .8fr;gap:50px;align-items:start}
+@media(max-width:1000px){.about-grid{grid-template-columns:auto 1fr}.stat-stack{grid-column:1/-1;grid-template-columns:repeat(3,1fr)}}
+@media(max-width:640px){.about-grid{grid-template-columns:1fr;justify-items:center}.stat-stack{grid-template-columns:1fr;width:100%}}
+
+.photo-frame{position:relative;width:250px;animation:floaty 6s ease-in-out infinite}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@property --ring{syntax:'<angle>';initial-value:0deg;inherits:false}
+.avatar{
+  width:250px;aspect-ratio:1;border-radius:50%;padding:6px;
+  background:conic-gradient(from var(--ring),var(--mauve),var(--blue),var(--teal),var(--green),var(--pink),var(--mauve));
+  animation:spinRing 6s linear infinite;
+  box-shadow:0 22px 55px -18px rgba(203,166,247,.45);
+}
+@keyframes spinRing{to{--ring:360deg}}
+.avatar-inner{
+  width:100%;height:100%;border-radius:50%;overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(203,166,247,.35), transparent 65%),
+    radial-gradient(circle at 50% 100%, rgba(137,180,250,.3), transparent 70%),
+    var(--crust);
+  display:flex;align-items:flex-end;justify-content:center;
+}
+.avatar-inner img{
+  width:100%;height:100%;object-fit:cover;object-position:center 12%;
+  filter:drop-shadow(0 10px 18px rgba(17,17,27,.5));
+  transition:transform .5s cubic-bezier(.2,.8,.2,1);
+}
+.photo-frame:hover .avatar-inner img{transform:scale(1.06)}
+.photo-frame .badge{
+  position:absolute;bottom:-14px;left:50%;transform:translateX(-50%);
+  font-family:var(--mono);font-size:.7rem;white-space:nowrap;
+  background:var(--crust);border:1px solid var(--surface1);
+  color:var(--green);padding:6px 14px;border-radius:99px;
+  box-shadow:0 8px 20px rgba(17,17,27,.6);z-index:2;
+}
+.photo-frame .badge::before{content:'❯ ';color:var(--mauve)}
 .about-grid p{color:var(--subtext);margin-bottom:18px}
 .about-grid p strong{color:var(--text)}
 .stat-stack{display:grid;gap:16px}
@@ -260,13 +294,13 @@ footer .heart{color:var(--red)}
   <div class="hero-left">
     <span class="eyebrow">available for projects</span>
     <h1>Aron Joseph.<br><span class="grad">Full-stack, end to end.</span></h1>
-    <p class="hero-sub">I build <strong>HRIS, payroll, and other service platforms</strong> with Laravel &amp; Vue — and take them mobile with React Native. From database schema to deployed server, I ship the whole thing.</p>
+    <p class="hero-sub">I build <strong>HRIS, payroll, and government service platforms</strong> with Laravel &amp; Vue — and take them mobile with React Native. From database schema to deployed server, I ship the whole thing.</p>
     <div class="cta-row">
       <a class="btn btn-primary" href="#work">view work <span aria-hidden="true">↓</span></a>
       <a class="btn btn-ghost" href="https://github.com/Arseph">github.com/Arseph</a>
     </div>
     <div class="hero-meta">
-      <span>City of Koronadal, PH</span>
+      <span>Cotabato City, PH</span>
       <span>Laravel · Vue · React Native</span>
     </div>
   </div>
@@ -283,12 +317,12 @@ footer .heart{color:var(--red)}
       </div>
       <div class="out reveal-out o1"><span class="k">name</span>: <span class="s">"Aron Joseph"</span></div>
       <div class="out reveal-out o2"><span class="k">role</span>: <span class="s">"Full-Stack Developer"</span></div>
-      <div class="out reveal-out o3"><span class="k">base</span>: <span class="s">"City of Koronadal, Philippines"</span></div>
+      <div class="out reveal-out o3"><span class="k">base</span>: <span class="s">"Cotabato City, Philippines"</span></div>
       <div class="prompt p2">
         <span class="seg dir"> ~/projects</span><span class="seg git"> main</span><span class="chev">❯</span>
         <span class="line type2 cmd"><span class="c-name">cat</span> stack.yaml | head -4</span>
       </div>
-      <div class="out reveal-out o4"><span class="k">backend</span>:  [<span class="v">Laravel</span>, <span class="v">MySQL</span>, <span class="v">Redis</span>, <span class="v">Nginx</span>]</div>
+      <div class="out reveal-out o4"><span class="k">backend</span>:  [<span class="v">Laravel 12</span>, <span class="v">MySQL</span>, <span class="v">Redis</span>, <span class="v">Nginx</span>]</div>
       <div class="out reveal-out o5"><span class="k">frontend</span>: [<span class="v">Vue 3</span>, <span class="v">Pinia</span>, <span class="v">Vuetify</span>]</div>
       <div class="out reveal-out o6"><span class="k">mobile</span>:   [<span class="v">React Native</span>, <span class="v">Expo</span>, <span class="v">Firebase</span>]</div>
       <div class="out reveal-out o7"><span class="k">also</span>:     [<span class="v">SQL Server</span>, <span class="v">Sanctum</span>, <span class="v">EAS Build</span>]</div>
@@ -302,10 +336,10 @@ footer .heart{color:var(--red)}
 
 <div class="marquee" aria-hidden="true">
   <div class="track">
-    <span>Laravel</span><span>Vue 3</span><span>React Native</span><span>Expo</span>
+    <span>Laravel 12</span><span>Vue 3</span><span>React Native</span><span>Expo</span>
     <span>MySQL</span><span>Redis</span><span>Nginx</span><span>SQL Server</span>
     <span>Pinia</span><span>Vuetify</span><span>Sanctum</span><span>Firebase</span>
-    <span>Laravel</span><span>Vue 3</span><span>React Native</span><span>Expo</span>
+    <span>Laravel 12</span><span>Vue 3</span><span>React Native</span><span>Expo</span>
     <span>MySQL</span><span>Redis</span><span>Nginx</span><span>SQL Server</span>
     <span>Pinia</span><span>Vuetify</span><span>Sanctum</span><span>Firebase</span>
   </div>
@@ -319,27 +353,27 @@ footer .heart{color:var(--red)}
   </div>
   <div class="grid">
     <article class="card c-hris reveal">
-      <span class="ptag">HRIS</span>
-      <h3>HRIS</h3>
-      <p>A complete human resources platform: role-based access control, payroll processing, biometric attendance with ZKTeco devices, loyalty award tracking, and audit logging — built for offices.</p>
+      <span class="ptag">HRIS · Government Health</span>
+      <h3>PrimeHRIS</h3>
+      <p>A complete human resources platform: role-based access control, payroll processing, biometric attendance with ZKTeco devices, loyalty award tracking, and audit logging — built for a government health office.</p>
       <div class="tech"><span>Laravel</span><span>Vue 3</span><span>MySQL</span><span>Redis</span><span>ZKTeco</span></div>
     </article>
     <article class="card c-doh reveal">
       <span class="ptag">Recruitment · Public Sector</span>
-      <h3>Job Portal</h3>
+      <h3>DOH Job Portal</h3>
       <p>A job application and recruitment portal hardened through systematic security remediation — 19 vulnerabilities resolved across risk levels, with CSP headers, CSRF protection, and updated client libraries.</p>
       <div class="tech"><span>Laravel</span><span>Nginx</span><span>Security</span><span>ZAP</span></div>
     </article>
     <article class="card c-tsa reveal">
       <span class="ptag">Payroll · Enterprise</span>
-      <h3>HRIS &amp; Payroll</h3>
-      <p>Payroll system including a 22-column payroll register PDF matched precisely to the company's existing Excel workflow — deductions, loans, and all.</p>
+      <h3>TSA HRIS &amp; Payroll</h3>
+      <p>Payroll system for a security agency, including a 22-column payroll register PDF matched precisely to the company's existing Excel workflow — deductions, loans, and all.</p>
       <div class="tech"><span>Laravel</span><span>Blade PDF</span><span>Vue 3</span><span>MySQL</span></div>
     </article>
     <article class="card c-loop reveal">
       <span class="ptag">Mobile · Community</span>
       <h3>Local Loop</h3>
-      <p>A local services mobile app for Koronadal City with real-time chat on Firebase, push notifications, provider ID verification, and offline-capable flows — shipped through EAS builds.</p>
+      <p>A local services mobile app for Cotabato City with real-time chat on Firebase, push notifications, provider ID verification, and offline-capable flows — shipped through EAS builds.</p>
       <div class="tech"><span>React Native</span><span>Expo</span><span>Firebase</span><span>Sanctum API</span></div>
     </article>
   </div>
@@ -352,9 +386,18 @@ footer .heart{color:var(--red)}
     <div class="rule"></div>
   </div>
   <div class="about-grid">
+    <div class="photo-frame reveal">
+      <div class="avatar">
+        <div class="avatar-inner">
+          <img src="profile.webp" alt="Aron Joseph" width="864" height="717">
+        </div>
+      </div>
+      <span class="badge">aron@cotabato</span>
+    </div>
     <div class="reveal">
       <p>I'm a developer who likes owning the <strong>entire stack</strong> — schema design, API architecture, frontend state, server configuration, and the deployment pipeline in between. Most of my work lives where reliability matters: government HR systems, payroll engines, and public service portals.</p>
-      <p>Lately that means <strong>Laravel APIs with Sanctum auth</strong>, Vue 3 dashboards, and React Native apps talking to the same backend. I run my own Ubuntu dev server, tune Nginx by hand, and care about the details — from database indexes to the exact spacing on a payroll PDF.</p>
+      <p>Lately that means <strong>Laravel 12 APIs with Sanctum auth</strong>, Vue 3 dashboards, and React Native apps talking to the same backend. I run my own Ubuntu dev server, tune Nginx by hand, and care about the details — from database indexes to the exact spacing on a payroll PDF.</p>
+      <p>When I'm not shipping features, I'm probably theming my terminal. (Yes, this page is Catppuccin Mocha. It was never going to be anything else.)</p>
     </div>
     <div class="stat-stack reveal">
       <div class="stat"><b>4+</b><small>production systems in active use</small></div>
@@ -377,7 +420,7 @@ footer .heart{color:var(--red)}
 </section>
 
 <footer>
-  © 2026 Aron Joseph @ j2b. All rights reserved. Made with <span class="heart">♥</span> in the Philippines.
+  built with pure HTML + CSS <span class="heart">♥</span> no JavaScript was harmed · © 2026 Aron Joseph
 </footer>
 
 </body>
