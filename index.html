@@ -36,6 +36,17 @@ body{
 a{color:var(--blue);text-decoration:none}
 a:focus-visible,button:focus-visible{outline:2px solid var(--mauve);outline-offset:3px;border-radius:4px}
 
+/* ---------- scroll progress bar ---------- */
+.scroll-progress{
+  position:fixed;top:0;left:0;right:0;height:3px;z-index:60;
+  background:linear-gradient(90deg,var(--mauve),var(--blue),var(--teal),var(--green));
+  transform-origin:left;transform:scaleX(0);
+}
+@supports (animation-timeline: scroll()){
+  .scroll-progress{animation:progress linear forwards;animation-timeline:scroll(root)}
+  @keyframes progress{to{transform:scaleX(1)}}
+}
+
 /* ---------- ambient background ---------- */
 .ambient{position:fixed;inset:0;z-index:-1;overflow:hidden;background:
   radial-gradient(ellipse 60% 40% at 15% 10%, rgba(203,166,247,.10), transparent 60%),
@@ -154,18 +165,62 @@ section{max-width:var(--maxw);margin:0 auto;padding:90px 24px}
 .sec-head .seg.dir{border-radius:6px 0 0 6px}
 .sec-head .seg.name{background:var(--surface0);color:var(--text);border-radius:0 6px 6px 0}
 .sec-head h2{font-family:var(--display);font-weight:700;font-size:1.6rem;margin-left:18px;letter-spacing:-.01em}
-.sec-head .rule{flex:1;height:1px;background:linear-gradient(90deg,var(--surface1),transparent);margin-left:22px}
+.sec-head .rule{flex:1;height:1px;background:linear-gradient(90deg,var(--surface1),transparent);margin-left:22px;transform-origin:left}
 
-/* scroll-driven reveal with fallback */
-.reveal{opacity:1}
+/* ---------- scroll-driven animations (with graceful fallback) ---------- */
+.reveal,.reveal-left,.reveal-right,.reveal-scale{opacity:1}
 @supports (animation-timeline: view()){
   .reveal{
-    opacity:0;transform:translateY(34px);
+    opacity:0;transform:translateY(38px);filter:blur(4px);
     animation:reveal .8s cubic-bezier(.2,.8,.2,1) forwards;
     animation-timeline:view();
-    animation-range:entry 0% entry 42%;
+    animation-range:entry 0% entry 45%;
   }
-  @keyframes reveal{to{opacity:1;transform:translateY(0)}}
+  @keyframes reveal{to{opacity:1;transform:translateY(0);filter:blur(0)}}
+
+  .reveal-left{
+    opacity:0;transform:translateX(-60px) rotate(-1.5deg);filter:blur(4px);
+    animation:revealX .8s cubic-bezier(.2,.8,.2,1) forwards;
+    animation-timeline:view();
+    animation-range:entry 0% entry 48%;
+  }
+  .reveal-right{
+    opacity:0;transform:translateX(60px) rotate(1.5deg);filter:blur(4px);
+    animation:revealX .8s cubic-bezier(.2,.8,.2,1) forwards;
+    animation-timeline:view();
+    animation-range:entry 0% entry 48%;
+  }
+  @keyframes revealX{to{opacity:1;transform:translateX(0) rotate(0);filter:blur(0)}}
+
+  .reveal-scale{
+    opacity:0;transform:scale(.75) rotate(-4deg);
+    animation:revealS .8s cubic-bezier(.34,1.4,.4,1) forwards;
+    animation-timeline:view();
+    animation-range:entry 0% entry 50%;
+  }
+  @keyframes revealS{to{opacity:1;transform:scale(1) rotate(0)}}
+
+  /* staggered ranges: later items finish deeper into the viewport */
+  .grid > :nth-child(2n){animation-range:entry 8% entry 56%}
+  .stat-stack > :nth-child(1){animation-range:entry 0% entry 42%}
+  .stat-stack > :nth-child(2){animation-range:entry 8% entry 52%}
+  .stat-stack > :nth-child(3){animation-range:entry 16% entry 62%}
+
+  /* section header rule sweeps in */
+  .sec-head .rule{
+    transform:scaleX(0);
+    animation:ruleGrow .9s cubic-bezier(.2,.8,.2,1) forwards;
+    animation-timeline:view();
+    animation-range:entry 0% entry 60%;
+  }
+  @keyframes ruleGrow{to{transform:scaleX(1)}}
+
+  /* contact section zooms up gently */
+  .contact .reveal{
+    transform:translateY(50px) scale(.96);
+    animation-name:contactIn;
+  }
+  @keyframes contactIn{to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
 }
 
 /* ---------- stack marquee ---------- */
@@ -207,6 +262,8 @@ section{max-width:var(--maxw);margin:0 auto;padding:90px 24px}
 .c-doh{--accent:var(--green)}
 .c-tsa{--accent:var(--peach)}
 .c-loop{--accent:var(--blue)}
+.c-emenu{--accent:var(--yellow)}
+.c-pos{--accent:var(--pink)}
 
 /* ---------- about ---------- */
 .about-grid{display:grid;grid-template-columns:auto 1.2fr .8fr;gap:50px;align-items:start}
@@ -275,6 +332,8 @@ footer .heart{color:var(--red)}
 </style>
 </head>
 <body>
+
+<div class="scroll-progress" aria-hidden="true"></div>
 
 <div class="ambient" aria-hidden="true">
   <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
@@ -353,25 +412,37 @@ footer .heart{color:var(--red)}
     <div class="rule"></div>
   </div>
   <div class="grid">
-    <article class="card c-hris reveal">
+    <article class="card c-emenu reveal-left">
+      <span class="ptag">E-Menu · Restaurant SaaS</span>
+      <h3>E-Menu Ordering Platform</h3>
+      <p>QR-code table ordering for restaurants — diners scan, browse the menu, and order from their phone while staff see orders arrive in real time. Multi-tenant with per-restaurant branding and theme customization, deployed on AWS EC2 behind Nginx with Cloudflare SSL.</p>
+      <div class="tech"><span>Laravel</span><span>Vue 3</span><span>Redis</span><span>AWS EC2</span><span>Cloudflare</span></div>
+    </article>
+    <article class="card c-hris reveal-right">
       <span class="ptag">HRIS</span>
       <h3>Human Resources Information System</h3>
       <p>A complete human resources platform: role-based access control, payroll processing, biometric attendance with ZKTeco devices, loyalty award tracking, and audit logging — built for a government/private office.</p>
       <div class="tech"><span>Laravel</span><span>Vue 3</span><span>MySQL</span><span>Redis</span><span>ZKTeco</span></div>
     </article>
-    <article class="card c-doh reveal">
+    <article class="card c-pos reveal-left">
+      <span class="ptag">POS · Retail</span>
+      <h3>Point of Sale System</h3>
+      <p>A sales and inventory platform for day-to-day store operations — fast checkout, stock tracking with low-inventory alerts, receipt printing, and daily sales reports that give owners a clear picture of the business.</p>
+      <div class="tech"><span>Laravel</span><span>Vue 3</span><span>MySQL</span><span>Redis</span></div>
+    </article>
+    <article class="card c-doh reveal-right">
       <span class="ptag">Job Portal</span>
       <h3>Applicant Management System</h3>
       <p>A job application and recruitment portal hardened through systematic security remediation — 19 vulnerabilities resolved across risk levels, with CSP headers, CSRF protection, and updated client libraries.</p>
       <div class="tech"><span>Laravel</span><span>Nginx</span><span>Security</span><span>ZAP</span></div>
     </article>
-    <article class="card c-tsa reveal">
+    <article class="card c-tsa reveal-left">
       <span class="ptag">Payroll · Enterprise</span>
       <h3>HRIS &amp; Payroll</h3>
       <p>Payroll system including a 22-column payroll register PDF matched precisely to the company's existing Excel workflow — deductions, loans, and all.</p>
       <div class="tech"><span>Laravel</span><span>Blade PDF</span><span>Vue 3</span><span>MySQL</span></div>
     </article>
-    <article class="card c-loop reveal">
+    <article class="card c-loop reveal-right">
       <span class="ptag">Mobile · Community</span>
       <h3>Local Loop</h3>
       <p>A local services mobile app with real-time chat on Firebase, push notifications, provider ID verification, and offline-capable flows — shipped through EAS builds.</p>
@@ -387,10 +458,10 @@ footer .heart{color:var(--red)}
     <div class="rule"></div>
   </div>
   <div class="about-grid">
-    <div class="photo-frame reveal">
+    <div class="photo-frame reveal-scale">
       <div class="avatar">
         <div class="avatar-inner">
-          <img src="profile.webp" alt="Aron Joseph" width="864" height="717">
+          <img src="profile.webp" alt="Aron Joseph" width="444" height="414">
         </div>
       </div>
       <span class="badge">aron.joseph</span>
@@ -399,10 +470,10 @@ footer .heart{color:var(--red)}
       <p>I'm a developer who likes owning the <strong>entire stack</strong> — schema design, API architecture, frontend state, server configuration, and the deployment pipeline in between. Most of my work lives where reliability matters: government or private HR systems, payroll engines, and public service portals.</p>
       <p>Lately that means <strong>Laravel APIs with Sanctum auth</strong>, Vue 3 dashboards, and React Native apps talking to the same backend. I run my own Ubuntu dev server, tune Nginx by hand, and care about the details — from database indexes to the exact spacing on a payroll PDF.</p>
     </div>
-    <div class="stat-stack reveal">
-      <div class="stat"><b>4+</b><small>production systems in active use</small></div>
-      <div class="stat"><b>3</b><small>platforms — web, mobile, server</small></div>
-      <div class="stat"><b>19</b><small>security findings remediated in one audit</small></div>
+    <div class="stat-stack">
+      <div class="stat reveal-scale"><b>4+</b><small>production systems in active use</small></div>
+      <div class="stat reveal-scale"><b>3</b><small>platforms — web, mobile, server</small></div>
+      <div class="stat reveal-scale"><b>19</b><small>security findings remediated in one audit</small></div>
     </div>
   </div>
 </section>
