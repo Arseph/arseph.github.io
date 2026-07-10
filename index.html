@@ -213,13 +213,13 @@ section{max-width:var(--maxw);margin:0 auto;padding:90px 24px}
 @media(max-width:1000px){.about-grid{grid-template-columns:auto 1fr}.stat-stack{grid-column:1/-1;grid-template-columns:repeat(3,1fr)}}
 @media(max-width:640px){.about-grid{grid-template-columns:1fr;justify-items:center}.stat-stack{grid-template-columns:1fr;width:100%}}
 
-.photo-frame{position:relative;width:250px;animation:floaty 6s ease-in-out infinite}
+.photo-frame{position:relative;width:250px}
 @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 @property --ring{syntax:'<angle>';initial-value:0deg;inherits:false}
 .avatar{
   width:250px;aspect-ratio:1;border-radius:50%;padding:6px;
   background:conic-gradient(from var(--ring),var(--mauve),var(--blue),var(--teal),var(--green),var(--pink),var(--mauve));
-  animation:spinRing 6s linear infinite;
+  animation:spinRing 6s linear infinite, floaty 6s ease-in-out infinite;
   box-shadow:0 22px 55px -18px rgba(203,166,247,.45);
 }
 @keyframes spinRing{to{--ring:360deg}}
@@ -238,11 +238,12 @@ section{max-width:var(--maxw);margin:0 auto;padding:90px 24px}
 }
 .photo-frame:hover .avatar-inner img{transform:scale(1.06)}
 .photo-frame .badge{
-  position:absolute;bottom:-14px;left:50%;transform:translateX(-50%);
+  position:absolute;bottom:-14px;left:0;right:0;margin:0 auto;width:max-content;
   font-family:var(--mono);font-size:.7rem;white-space:nowrap;
   background:var(--crust);border:1px solid var(--surface1);
   color:var(--green);padding:6px 14px;border-radius:99px;
   box-shadow:0 8px 20px rgba(17,17,27,.6);z-index:2;
+  animation:floaty 6s ease-in-out infinite;
 }
 .photo-frame .badge::before{content:'❯ ';color:var(--mauve)}
 .about-grid p{color:var(--subtext);margin-bottom:18px}
