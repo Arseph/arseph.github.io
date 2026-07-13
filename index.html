@@ -52,12 +52,111 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--mauve);outline-offs
   radial-gradient(ellipse 60% 40% at 15% 10%, rgba(203,166,247,.10), transparent 60%),
   radial-gradient(ellipse 50% 40% at 85% 85%, rgba(137,180,250,.08), transparent 60%),
   var(--base);}
-.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.35}
+/* subtle drifting grid */
+.ambient::before{
+  content:'';position:absolute;inset:-100px;
+  background-image:
+    linear-gradient(rgba(88,91,112,.14) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(88,91,112,.14) 1px, transparent 1px);
+  background-size:56px 56px;
+  mask-image:radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 75%);
+  -webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 75%);
+  animation:gridPan 40s linear infinite;
+}
+@keyframes gridPan{from{transform:translate(0,0)}to{transform:translate(56px,56px)}}
+/* aurora sheet — slowly rotating color wash */
+.aurora{
+  position:absolute;top:-40%;left:-25%;width:150%;height:120%;
+  background:conic-gradient(from 0deg at 50% 50%,
+    rgba(203,166,247,.16), rgba(137,180,250,.12), rgba(148,226,213,.14),
+    rgba(166,227,161,.10), rgba(245,194,231,.14), rgba(203,166,247,.16));
+  filter:blur(110px);
+  animation:auroraSpin 60s linear infinite, auroraBreathe 14s ease-in-out infinite alternate;
+}
+@keyframes auroraSpin{to{transform:rotate(360deg)}}
+@keyframes auroraBreathe{from{opacity:.5}to{opacity:.95}}
+.blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.35;animation-name:drift1,hueShift;animation-duration:26s,20s;animation-timing-function:ease-in-out;animation-iteration-count:infinite;animation-direction:alternate}
+@keyframes hueShift{from{filter:blur(90px) hue-rotate(0deg)}to{filter:blur(90px) hue-rotate(40deg)}}
 .blob.b1{width:420px;height:420px;background:rgba(203,166,247,.22);top:-120px;left:-80px;animation:drift1 26s ease-in-out infinite alternate}
 .blob.b2{width:380px;height:380px;background:rgba(137,180,250,.18);bottom:-100px;right:-60px;animation:drift2 32s ease-in-out infinite alternate}
 .blob.b3{width:260px;height:260px;background:rgba(166,227,161,.12);top:40%;left:60%;animation:drift1 38s ease-in-out infinite alternate-reverse}
 @keyframes drift1{from{transform:translate(0,0) scale(1)}to{transform:translate(90px,60px) scale(1.15)}}
 @keyframes drift2{from{transform:translate(0,0) scale(1)}to{transform:translate(-70px,-50px) scale(1.1)}}
+/* floating particles */
+.particle{position:absolute;bottom:-20px;border-radius:50%;opacity:0;animation:floatUp linear infinite}
+@keyframes floatUp{
+  0%{transform:translateY(0) translateX(0);opacity:0}
+  8%{opacity:.7}
+  90%{opacity:.4}
+  100%{transform:translateY(-110vh) translateX(40px);opacity:0}
+}
+.particle:nth-child(odd){animation-name:floatUpAlt}
+@keyframes floatUpAlt{
+  0%{transform:translateY(0) translateX(0);opacity:0}
+  8%{opacity:.6}
+  90%{opacity:.3}
+  100%{transform:translateY(-110vh) translateX(-50px);opacity:0}
+}
+.p1{left:6%;width:5px;height:5px;background:var(--mauve);animation-duration:18s;animation-delay:0s}
+.p2m{left:15%;width:3px;height:3px;background:var(--blue);animation-duration:24s;animation-delay:3s}
+.p3m{left:26%;width:6px;height:6px;background:var(--teal);animation-duration:20s;animation-delay:7s}
+.p4{left:38%;width:4px;height:4px;background:var(--green);animation-duration:26s;animation-delay:1.5s}
+.p5{left:49%;width:3px;height:3px;background:var(--pink);animation-duration:22s;animation-delay:9s}
+.p6{left:58%;width:5px;height:5px;background:var(--yellow);animation-duration:19s;animation-delay:5s}
+.p7{left:67%;width:4px;height:4px;background:var(--mauve);animation-duration:25s;animation-delay:11s}
+.p8{left:76%;width:3px;height:3px;background:var(--blue);animation-duration:21s;animation-delay:2.5s}
+.p9{left:85%;width:6px;height:6px;background:var(--lavender);animation-duration:23s;animation-delay:8s}
+.p10{left:93%;width:4px;height:4px;background:var(--peach);animation-duration:27s;animation-delay:4.5s}
+.p11{left:32%;width:3px;height:3px;background:var(--teal);animation-duration:29s;animation-delay:13s}
+.p12{left:71%;width:5px;height:5px;background:var(--green);animation-duration:24s;animation-delay:15s}
+/* twinkling stars */
+.star{position:absolute;width:3px;height:3px;border-radius:50%;background:var(--lavender);animation:twinkle ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:.08;transform:scale(.8)}50%{opacity:.85;transform:scale(1.7)}}
+.st1{top:10%;left:12%;animation-duration:3.4s}
+.st2{top:18%;left:78%;animation-duration:4.1s;animation-delay:.8s;background:var(--blue)}
+.st3{top:30%;left:42%;animation-duration:2.9s;animation-delay:1.6s}
+.st4{top:8%;left:55%;animation-duration:4.6s;animation-delay:2.4s;background:var(--teal)}
+.st5{top:44%;left:88%;animation-duration:3.7s;animation-delay:.4s}
+.st6{top:58%;left:8%;animation-duration:4.3s;animation-delay:3.1s;background:var(--pink)}
+.st7{top:70%;left:64%;animation-duration:3.1s;animation-delay:1.2s}
+.st8{top:82%;left:28%;animation-duration:4.8s;animation-delay:2s;background:var(--blue)}
+.st9{top:24%;left:5%;animation-duration:3.9s;animation-delay:4s;background:var(--yellow)}
+.st10{top:64%;left:94%;animation-duration:3.3s;animation-delay:.9s}
+/* floating code glyphs */
+.glyph{
+  position:absolute;bottom:-50px;font-family:var(--mono);font-weight:500;
+  color:var(--overlay);opacity:0;user-select:none;
+  animation:glyphUp linear infinite;
+}
+@keyframes glyphUp{
+  0%{transform:translateY(0) rotate(-6deg);opacity:0}
+  10%{opacity:.4}
+  85%{opacity:.15}
+  100%{transform:translateY(-115vh) rotate(14deg);opacity:0}
+}
+.g1{left:9%;font-size:1.2rem;animation-duration:32s;animation-delay:1s;color:rgba(203,166,247,.5)}
+.g2{left:22%;font-size:.9rem;animation-duration:38s;animation-delay:8s}
+.g3{left:35%;font-size:1.4rem;animation-duration:30s;animation-delay:15s;color:rgba(137,180,250,.45)}
+.g4{left:52%;font-size:1rem;animation-duration:36s;animation-delay:4s}
+.g5{left:63%;font-size:1.3rem;animation-duration:33s;animation-delay:12s;color:rgba(148,226,213,.45)}
+.g6{left:74%;font-size:.95rem;animation-duration:40s;animation-delay:19s}
+.g7{left:83%;font-size:1.15rem;animation-duration:34s;animation-delay:6s;color:rgba(166,227,161,.45)}
+.g8{left:94%;font-size:1rem;animation-duration:37s;animation-delay:23s;color:rgba(245,194,231,.4)}
+/* shooting stars */
+.shoot{
+  position:absolute;left:-15%;width:130px;height:2px;border-radius:2px;
+  background:linear-gradient(90deg,transparent,rgba(180,190,254,.9));
+  opacity:0;animation:shoot linear infinite;
+}
+.shoot::after{content:'';position:absolute;right:-2px;top:-2px;width:6px;height:6px;border-radius:50%;background:var(--lavender);box-shadow:0 0 14px 3px rgba(180,190,254,.8)}
+@keyframes shoot{
+  0%,86%{opacity:0;transform:translate(0,0) rotate(16deg)}
+  88%{opacity:1}
+  100%{opacity:0;transform:translate(135vw,42vh) rotate(16deg)}
+}
+.sh1{top:6%;animation-duration:11s;animation-delay:2s}
+.sh2{top:34%;animation-duration:14s;animation-delay:8s}
+.sh3{top:16%;animation-duration:17s;animation-delay:13s;transform:rotate(16deg) scaleX(.7)}
 
 /* ---------- nav ---------- */
 nav{
@@ -73,9 +172,11 @@ nav{
 .logo .tilde{color:var(--mauve)}
 .logo .slash{color:var(--overlay)}
 .nav-links{display:flex;gap:26px;font-family:var(--mono);font-size:.8rem}
-.nav-links a{color:var(--subtext);transition:color .25s}
+.nav-links a{color:var(--subtext);transition:color .25s;position:relative}
 .nav-links a::before{content:'./';color:var(--overlay)}
+.nav-links a::after{content:'';position:absolute;left:0;right:0;bottom:-4px;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--mauve),var(--blue));transform:scaleX(0);transform-origin:left;transition:transform .3s cubic-bezier(.2,.8,.2,1)}
 .nav-links a:hover{color:var(--mauve)}
+.nav-links a:hover::after{transform:scaleX(1)}
 @media(max-width:640px){.nav-links{gap:14px;font-size:.7rem}}
 
 /* ---------- hero ---------- */
@@ -102,16 +203,19 @@ h1 .grad{background:linear-gradient(120deg,var(--mauve),var(--blue) 45%,var(--te
 .hero-sub strong{color:var(--text);font-weight:600}
 
 .cta-row{display:flex;gap:14px;margin-top:30px;flex-wrap:wrap}
-.btn{font-family:var(--mono);font-size:.85rem;font-weight:500;padding:13px 24px;border-radius:10px;display:inline-flex;align-items:center;gap:9px;transition:transform .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s;cursor:pointer;border:none}
-.btn-primary{background:var(--mauve);color:var(--crust)}
-.btn-primary:hover{transform:translateY(-3px);box-shadow:0 10px 30px -8px rgba(203,166,247,.55)}
+.btn{font-family:var(--mono);font-size:.85rem;font-weight:500;padding:13px 24px;border-radius:10px;display:inline-flex;align-items:center;gap:9px;transition:translate .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s;cursor:pointer;border:none}
+.btn-primary{background:var(--mauve);color:var(--crust);animation:glowPulse 3.2s ease-in-out infinite}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 0 0 rgba(203,166,247,.0)}50%{box-shadow:0 6px 26px -4px rgba(203,166,247,.5)}}
+.btn-primary:hover{translate:0 -3px;box-shadow:0 10px 30px -8px rgba(203,166,247,.55);animation:none}
 .btn-ghost{background:transparent;color:var(--text);border:1px solid var(--surface1)}
-.btn-ghost:hover{transform:translateY(-3px);border-color:var(--mauve);color:var(--mauve)}
+.btn-ghost:hover{translate:0 -3px;border-color:var(--mauve);color:var(--mauve)}
 
 .hero-meta{margin-top:34px;font-family:var(--mono);font-size:.75rem;color:var(--subtext0);display:flex;gap:22px;flex-wrap:wrap}
 .hero-meta span::before{content:'▸ ';color:var(--peach)}
 
 /* ---------- terminal (signature) ---------- */
+.tilt-wrap{perspective:1000px}
+.tilt-wrap,.avatar-inner{transform-style:preserve-3d}
 .terminal{
   background:var(--mantle);
   border:1px solid var(--surface0);
@@ -179,18 +283,20 @@ section{max-width:var(--maxw);margin:0 auto;padding:90px 24px}
   @keyframes reveal{to{opacity:1;transform:translateY(0);filter:blur(0)}}
 
   .reveal-left{
-    opacity:0;transform:translateX(-60px) rotate(-1.5deg);filter:blur(4px);
-    animation:revealX .8s cubic-bezier(.2,.8,.2,1) forwards;
+    opacity:0;transform:translateX(-60px) rotateY(10deg);filter:blur(4px);
+    animation:revealXL .8s cubic-bezier(.2,.8,.2,1) forwards;
     animation-timeline:view();
     animation-range:entry 0% entry 48%;
   }
   .reveal-right{
-    opacity:0;transform:translateX(60px) rotate(1.5deg);filter:blur(4px);
-    animation:revealX .8s cubic-bezier(.2,.8,.2,1) forwards;
+    opacity:0;transform:translateX(60px) rotateY(-10deg);filter:blur(4px);
+    animation:revealXR .8s cubic-bezier(.2,.8,.2,1) forwards;
     animation-timeline:view();
     animation-range:entry 0% entry 48%;
   }
-  @keyframes revealX{to{opacity:1;transform:translateX(0) rotate(0);filter:blur(0)}}
+  @keyframes revealXL{to{opacity:1;transform:translateX(0) rotateY(0);filter:blur(0)}}
+  @keyframes revealXR{to{opacity:1;transform:translateX(0) rotateY(0);filter:blur(0)}}
+  .grid{perspective:1200px}
 
   .reveal-scale{
     opacity:0;transform:scale(.75) rotate(-4deg);
@@ -203,8 +309,8 @@ section{max-width:var(--maxw);margin:0 auto;padding:90px 24px}
   /* staggered ranges: later items finish deeper into the viewport */
   .grid > :nth-child(2n){animation-range:entry 8% entry 56%}
   .stat-stack > :nth-child(1){animation-range:entry 0% entry 42%}
-  .stat-stack > :nth-child(2){animation-range:entry 8% entry 52%}
-  .stat-stack > :nth-child(3){animation-range:entry 16% entry 62%}
+  .stat-stack > :nth-child(2){animation-range:entry 6% entry 50%}
+  .stat-stack > :nth-child(3){animation-range:entry 12% entry 58%}
 
   /* section header rule sweeps in */
   .sec-head .rule{
@@ -215,12 +321,74 @@ section{max-width:var(--maxw);margin:0 auto;padding:90px 24px}
   }
   @keyframes ruleGrow{to{transform:scaleX(1)}}
 
+  /* section titles wipe in */
+  .sec-head h2{
+    clip-path:inset(0 100% 0 0);
+    animation:wipe .8s cubic-bezier(.2,.8,.2,1) forwards;
+    animation-timeline:view();
+    animation-range:entry 0% entry 50%;
+  }
+  @keyframes wipe{to{clip-path:inset(0 0 0 0)}}
+
+  /* stats count up as they scroll in */
+  .num{font-size:0}
+  .num::after{
+    content:counter(cc);
+    counter-reset:cc var(--n);
+    font-size:1.9rem;font-weight:800;font-family:var(--display);
+  }
+  .stat .num{
+    animation:countUp 1.2s cubic-bezier(.2,.8,.2,1) forwards;
+    animation-timeline:view();
+    animation-range:entry 0% entry 70%;
+  }
+  @keyframes countUp{from{--n:0}to{--n:var(--t)}}
+
+  /* contact heading rises word by word */
+  .wclip{display:inline-block;overflow:hidden;vertical-align:bottom}
+  .wclip .w{
+    display:inline-block;transform:translateY(110%);
+    animation:wordUp .7s cubic-bezier(.2,.8,.2,1) forwards;
+    animation-timeline:view();
+  }
+  .wclip:nth-child(1) .w{animation-range:entry 0% entry 45%}
+  .wclip:nth-child(2) .w{animation-range:entry 6% entry 51%}
+  .wclip:nth-child(3) .w{animation-range:entry 12% entry 57%}
+  .wclip:nth-child(4) .w{animation-range:entry 18% entry 63%}
+  .wclip:nth-child(5) .w{animation-range:entry 24% entry 69%}
+  @keyframes wordUp{to{transform:translateY(0)}}
+
+  /* ambient parallax — backdrop drifts slowly against scroll */
+  .ambient{
+    inset:-10% 0;
+    animation:ambientPar linear both;
+    animation-timeline:scroll(root);
+  }
+  @keyframes ambientPar{from{transform:translateY(0)}to{transform:translateY(-5%)}}
+
+  /* big outline band couples to page scroll */
+  .bigband .row1{animation:bandL linear both;animation-timeline:scroll(root)}
+  .bigband .row2{animation:bandR linear both;animation-timeline:scroll(root)}
+  @keyframes bandL{from{transform:translateX(0)}to{transform:translateX(-18%)}}
+  @keyframes bandR{from{transform:translateX(-18%)}to{transform:translateX(0)}}
+
   /* contact section zooms up gently */
   .contact .reveal{
     transform:translateY(50px) scale(.96);
     animation-name:contactIn;
   }
   @keyframes contactIn{to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+
+  /* hero drifts away as you scroll past it */
+  .hero-left,.terminal{
+    animation-name:rise,heroExit;
+    animation-duration:.9s,1s;
+    animation-timeline:auto,view();
+    animation-range:normal,exit 0% exit 100%;
+    animation-fill-mode:both,forwards;
+  }
+  .terminal{animation-name:termIn,heroExit;animation-duration:1s,1s}
+  @keyframes heroExit{to{opacity:.15;transform:translateY(-60px) scale(.96)}}
 }
 
 /* ---------- stack marquee ---------- */
@@ -247,17 +415,26 @@ section{max-width:var(--maxw);margin:0 auto;padding:90px 24px}
   padding:30px 28px;
   position:relative;
   overflow:hidden;
-  transition:transform .35s cubic-bezier(.2,.8,.2,1),border-color .35s,box-shadow .35s;
+  transition:translate .35s cubic-bezier(.2,.8,.2,1),border-color .35s,box-shadow .35s;
 }
-.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent,var(--mauve));transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.2,.8,.2,1)}
-.card:hover{transform:translateY(-7px);border-color:var(--surface1);box-shadow:0 24px 50px -20px rgba(17,17,27,.9)}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent,var(--mauve));transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.2,.8,.2,1);z-index:1}
+.card::after{
+  content:'';position:absolute;top:0;bottom:0;left:-80%;width:50%;
+  background:linear-gradient(105deg,transparent,rgba(205,214,244,.06) 40%,rgba(203,166,247,.10) 50%,rgba(205,214,244,.06) 60%,transparent);
+  transform:skewX(-18deg);
+  transition:left .7s cubic-bezier(.2,.8,.2,1);
+  pointer-events:none;
+}
+.card:hover::after{left:130%}
+.card:hover{translate:0 -7px;border-color:var(--surface1);box-shadow:0 24px 50px -20px rgba(17,17,27,.9);background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%), rgba(203,166,247,.10), transparent 65%),var(--mantle)}
 .card:hover::before{transform:scaleX(1)}
 .card .ptag{font-family:var(--mono);font-size:.68rem;color:var(--accent,var(--mauve));border:1px solid color-mix(in srgb,var(--accent,var(--mauve)) 40%,transparent);padding:3px 10px;border-radius:99px;display:inline-block;margin-bottom:16px}
 .card h3{font-family:var(--display);font-size:1.28rem;font-weight:700;margin-bottom:10px}
 .card p{color:var(--subtext);font-size:.95rem}
 .card .tech{margin-top:20px;display:flex;flex-wrap:wrap;gap:8px}
-.card .tech span{font-family:var(--mono);font-size:.68rem;background:var(--surface0);color:var(--subtext);padding:4px 10px;border-radius:6px;transition:background .25s,color .25s}
+.card .tech span{font-family:var(--mono);font-size:.68rem;background:var(--surface0);color:var(--subtext);padding:4px 10px;border-radius:6px;transition:background .25s,color .25s,transform .25s cubic-bezier(.34,1.6,.4,1)}
 .card:hover .tech span{color:var(--text)}
+.card .tech span:hover{transform:translateY(-3px) scale(1.08);background:var(--surface1);color:var(--accent,var(--mauve))}
 .c-hris{--accent:var(--mauve)}
 .c-doh{--accent:var(--green)}
 .c-tsa{--accent:var(--peach)}
@@ -273,6 +450,7 @@ section{max-width:var(--maxw);margin:0 auto;padding:90px 24px}
 .photo-frame{position:relative;width:250px}
 @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 @property --ring{syntax:'<angle>';initial-value:0deg;inherits:false}
+@property --n{syntax:'<integer>';initial-value:0;inherits:false}
 .avatar{
   width:250px;aspect-ratio:1;border-radius:50%;padding:6px;
   background:conic-gradient(from var(--ring),var(--mauve),var(--blue),var(--teal),var(--green),var(--pink),var(--mauve));
@@ -303,15 +481,47 @@ section{max-width:var(--maxw);margin:0 auto;padding:90px 24px}
   animation:floaty 6s ease-in-out infinite;
 }
 .photo-frame .badge::before{content:'❯ ';color:var(--mauve)}
+/* orbiting satellite dot around the avatar */
+.photo-frame .orbit{
+  position:absolute;inset:-16px;border-radius:50%;pointer-events:none;
+  animation:orbitSpin 9s linear infinite;
+}
+.photo-frame .orbit::before{
+  content:'';position:absolute;top:50%;left:-5px;width:10px;height:10px;border-radius:50%;
+  background:var(--teal);box-shadow:0 0 12px 2px rgba(148,226,213,.7);
+}
+@keyframes orbitSpin{to{transform:rotate(360deg)}}
 .about-grid p{color:var(--subtext);margin-bottom:18px}
 .about-grid p strong{color:var(--text)}
 .stat-stack{display:grid;gap:16px}
-.stat{background:var(--mantle);border:1px solid var(--surface0);border-radius:var(--radius);padding:20px 24px;display:flex;align-items:baseline;gap:14px;transition:transform .3s,border-color .3s}
-.stat:hover{transform:translateX(6px);border-color:var(--mauve)}
+.stat{background:var(--mantle);border:1px solid var(--surface0);border-radius:var(--radius);padding:20px 24px;display:flex;align-items:baseline;gap:14px;transition:translate .3s,border-color .3s}
+.stat:hover{translate:6px 0;border-color:var(--mauve)}
 .stat b{font-family:var(--display);font-size:1.9rem;font-weight:800;color:var(--mauve)}
 .stat:nth-child(2) b{color:var(--blue)}
 .stat:nth-child(3) b{color:var(--green)}
 .stat small{font-family:var(--mono);font-size:.74rem;color:var(--subtext0)}
+
+/* ---------- big outline band ---------- */
+.bigband{overflow:hidden;padding:30px 0 10px;user-select:none}
+.bigband .row{
+  display:flex;gap:56px;width:max-content;white-space:nowrap;
+  font-family:var(--display);font-weight:800;
+  font-size:clamp(2.6rem,7vw,5.2rem);letter-spacing:-.02em;line-height:1.15;
+  color:transparent;-webkit-text-stroke:1.5px var(--surface2);
+}
+.bigband .row .fill{
+  -webkit-text-stroke:0;
+  background:linear-gradient(120deg,var(--mauve),var(--blue));
+  -webkit-background-clip:text;background-clip:text;
+}
+.bigband .row2{margin-top:6px;opacity:.55}
+/* fallback: slow drift only when scroll-timelines unsupported */
+@supports not (animation-timeline: scroll()){
+  .bigband .row1{animation:bandDriftL 46s linear infinite}
+  .bigband .row2{animation:bandDriftR 46s linear infinite}
+}
+@keyframes bandDriftL{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@keyframes bandDriftR{from{transform:translateX(-50%)}to{transform:translateX(0)}}
 
 /* ---------- contact ---------- */
 .contact{text-align:center;padding-bottom:120px}
@@ -323,6 +533,27 @@ section{max-width:var(--maxw);margin:0 auto;padding:90px 24px}
 
 footer{border-top:1px solid var(--surface0);padding:26px 24px;text-align:center;font-family:var(--mono);font-size:.72rem;color:var(--overlay)}
 footer .heart{color:var(--red)}
+
+/* ---------- custom cursor (fine pointers only) ---------- */
+.cursor-dot,.cursor-ring{display:none}
+@media (hover:hover) and (pointer:fine){
+  body.fx{cursor:none}
+  body.fx a,body.fx button,body.fx .btn{cursor:none}
+  .cursor-dot,.cursor-ring{
+    display:block;position:fixed;top:0;left:0;z-index:999;pointer-events:none;
+    border-radius:50%;will-change:transform;
+  }
+  .cursor-dot{width:8px;height:8px;background:var(--mauve);margin:-4px 0 0 -4px;box-shadow:0 0 10px 2px rgba(203,166,247,.5)}
+  .cursor-ring{
+    width:38px;height:38px;margin:-19px 0 0 -19px;
+    border:1.5px solid rgba(203,166,247,.55);
+    transition:width .25s,height .25s,margin .25s,border-color .25s,background .25s;
+  }
+  .cursor-ring.on{
+    width:58px;height:58px;margin:-29px 0 0 -29px;
+    border-color:var(--teal);background:rgba(148,226,213,.08);
+  }
+}
 
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms !important;animation-delay:0s !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
@@ -336,7 +567,20 @@ footer .heart{color:var(--red)}
 <div class="scroll-progress" aria-hidden="true"></div>
 
 <div class="ambient" aria-hidden="true">
+  <div class="aurora"></div>
   <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <span class="particle p1"></span><span class="particle p2m"></span><span class="particle p3m"></span>
+  <span class="particle p4"></span><span class="particle p5"></span><span class="particle p6"></span>
+  <span class="particle p7"></span><span class="particle p8"></span><span class="particle p9"></span>
+  <span class="particle p10"></span><span class="particle p11"></span><span class="particle p12"></span>
+  <span class="star st1"></span><span class="star st2"></span><span class="star st3"></span>
+  <span class="star st4"></span><span class="star st5"></span><span class="star st6"></span>
+  <span class="star st7"></span><span class="star st8"></span><span class="star st9"></span>
+  <span class="star st10"></span>
+  <span class="glyph g1">{ }</span><span class="glyph g2">;</span><span class="glyph g3">&lt;/&gt;</span>
+  <span class="glyph g4">=&gt;</span><span class="glyph g5">❯</span><span class="glyph g6">&amp;&amp;</span>
+  <span class="glyph g7">λ</span><span class="glyph g8">( )</span>
+  <span class="shoot sh1"></span><span class="shoot sh2"></span><span class="shoot sh3"></span>
 </div>
 
 <nav>
@@ -354,7 +598,7 @@ footer .heart{color:var(--red)}
   <div class="hero-left">
     <span class="eyebrow">available for projects</span>
     <h1>Aron Joseph.<br><span class="grad">Full-stack, end to end.</span></h1>
-    <p class="hero-sub">I build <strong>HRIS, Payroll, POS, EMENUS and other service platforms</strong> with Laravel &amp; Vue — and take them mobile with React Native. From database schema to deployed server, I ship the whole thing.</p>
+    <p class="hero-sub">I build <strong>Web Applications, PWAs, and Mobile Apps</strong> From database schema to deployed server, I ship the whole thing.</p>
     <div class="cta-row">
       <a class="btn btn-primary" href="#work">view work <span aria-hidden="true">↓</span></a>
       <a class="btn btn-ghost" href="https://github.com/Arseph">github.com/Arseph</a>
@@ -365,6 +609,7 @@ footer .heart{color:var(--red)}
     </div>
   </div>
 
+  <div class="tilt-wrap">
   <div class="terminal" aria-label="Terminal introduction">
     <div class="term-bar">
       <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
@@ -392,6 +637,7 @@ footer .heart{color:var(--red)}
       </div>
     </div>
   </div>
+  </div>
 </header>
 
 <div class="marquee" aria-hidden="true">
@@ -415,13 +661,13 @@ footer .heart{color:var(--red)}
     <article class="card c-emenu reveal-left">
       <span class="ptag">E-Menu · Restaurant SaaS</span>
       <h3>E-Menu Ordering Platform</h3>
-      <p>QR-code table ordering for restaurants — diners scan, browse the menu, and order from their phone while staff see orders arrive in real time. Multi-tenant with per-restaurant branding and theme customization, deployed on AWS EC2 behind Nginx with Cloudflare SSL.</p>
+      <p>QR-code table ordering for restaurants — diners scan, browse the menu, and order from their phone while staff see orders arrive in real time. Multi-tenant with per-restaurant branding and theme customization.</p>
       <div class="tech"><span>Laravel</span><span>Vue 3</span><span>Redis</span><span>AWS EC2</span><span>Cloudflare</span></div>
     </article>
     <article class="card c-hris reveal-right">
       <span class="ptag">HRIS</span>
       <h3>Human Resources Information System</h3>
-      <p>A complete human resources platform: role-based access control, payroll processing, biometric attendance with ZKTeco devices, loyalty award tracking, and audit logging — built for a government/private office.</p>
+      <p>A complete human resources platform: role-based access control, payroll processing, biometric attendance with ZKTeco devices, loyalty award tracking, and audit logging — built for offices.</p>
       <div class="tech"><span>Laravel</span><span>Vue 3</span><span>MySQL</span><span>Redis</span><span>ZKTeco</span></div>
     </article>
     <article class="card c-pos reveal-left">
@@ -433,12 +679,12 @@ footer .heart{color:var(--red)}
     <article class="card c-doh reveal-right">
       <span class="ptag">Job Portal</span>
       <h3>Applicant Management System</h3>
-      <p>A job application and recruitment portal hardened through systematic security remediation — 19 vulnerabilities resolved across risk levels, with CSP headers, CSRF protection, and updated client libraries.</p>
+      <p>A job application and recruitment portal hardened through systematic security remediation.</p>
       <div class="tech"><span>Laravel</span><span>Nginx</span><span>Security</span><span>ZAP</span></div>
     </article>
     <article class="card c-tsa reveal-left">
       <span class="ptag">Payroll · Enterprise</span>
-      <h3>HRIS &amp; Payroll</h3>
+      <h3>Payroll</h3>
       <p>Payroll system including a 22-column payroll register PDF matched precisely to the company's existing Excel workflow — deductions, loans, and all.</p>
       <div class="tech"><span>Laravel</span><span>Blade PDF</span><span>Vue 3</span><span>MySQL</span></div>
     </article>
@@ -464,25 +710,37 @@ footer .heart{color:var(--red)}
           <img src="profile.webp" alt="Aron Joseph" width="444" height="414">
         </div>
       </div>
+      <span class="orbit" aria-hidden="true"></span>
       <span class="badge">aron.joseph</span>
     </div>
     <div class="reveal">
-      <p>I'm a developer who likes owning the <strong>entire stack</strong> — schema design, API architecture, frontend state, server configuration, and the deployment pipeline in between. Most of my work lives where reliability matters: government or private HR systems, payroll engines, and public service portals.</p>
+      <p>I'm a developer who likes owning the <strong>entire stack</strong> — schema design, API architecture, frontend state, server configuration, and the deployment pipeline in between. Most of my work lives where reliability matters: HR systems, payroll engines.</p>
       <p>Lately that means <strong>Laravel APIs with Sanctum auth</strong>, Vue 3 dashboards, and React Native apps talking to the same backend. I run my own Ubuntu dev server, tune Nginx by hand, and care about the details — from database indexes to the exact spacing on a payroll PDF.</p>
     </div>
     <div class="stat-stack">
-      <div class="stat reveal-scale"><b>4+</b><small>production systems in active use</small></div>
-      <div class="stat reveal-scale"><b>3</b><small>platforms — web, mobile, server</small></div>
-      <div class="stat reveal-scale"><b>19</b><small>security findings remediated in one audit</small></div>
+      <div class="stat reveal-scale"><b><span class="num" style="--t:7">7</span></b><small>years in programming industry</small></div>
+      <div class="stat reveal-scale"><b><span class="num" style="--t:10">10</span>+</b><small>websites &amp; systems implemented</small></div>
+      <div class="stat reveal-scale"><b><span class="num" style="--t:3">3</span></b><small>platforms — PWA, mobile, System</small></div>
     </div>
   </div>
 </section>
 
+<div class="bigband" aria-hidden="true">
+  <div class="row row1">
+    <span>HRIS</span><span class="fill">PAYROLL</span><span>POS</span><span class="fill">E-MENU</span><span>MOBILE APPS</span><span class="fill">WEB SYSTEMS</span>
+    <span>HRIS</span><span class="fill">PAYROLL</span><span>POS</span><span class="fill">E-MENU</span><span>MOBILE APPS</span><span class="fill">WEB SYSTEMS</span>
+  </div>
+  <div class="row row2">
+    <span class="fill">LARAVEL</span><span>VUE 3</span><span class="fill">REACT NATIVE</span><span>MYSQL</span><span class="fill">REDIS</span><span>NGINX</span>
+    <span class="fill">LARAVEL</span><span>VUE 3</span><span class="fill">REACT NATIVE</span><span>MYSQL</span><span class="fill">REDIS</span><span>NGINX</span>
+  </div>
+</div>
+
 <section id="contact" class="contact">
   <div class="reveal">
     <p class="cmdline">❯ <span class="c-name">git</span> commit -m "let's build something"</p>
-    <h2>Have a project in mind?</h2>
-    <p>I'm open to freelance and contract work — especially HRIS, payroll, Point of sales, government systems, and mobile apps that need a solid backend behind them.</p>
+    <h2><span class="wclip"><span class="w">Have</span></span> <span class="wclip"><span class="w">a</span></span> <span class="wclip"><span class="w">project</span></span> <span class="wclip"><span class="w">in</span></span> <span class="wclip"><span class="w">mind?</span></span></h2>
+    <p>I'm open to freelance and contract work — especially HRIS, payroll, Point of sales, systems, and mobile apps that need a solid backend behind them.</p>
     <div class="contact-links">
       <a class="btn btn-primary" href="mailto:aronjosephbra@gmail.com">aronjosephbra@gmail.com</a>
       <a class="btn btn-ghost" href="https://github.com/Arseph">GitHub / Arseph</a>
@@ -493,6 +751,101 @@ footer .heart{color:var(--red)}
 <footer>
   © 2026 Aron Joseph @ j2b — built with <span class="heart">♥</span>
 </footer>
+
+<div class="cursor-ring" aria-hidden="true"></div>
+<div class="cursor-dot" aria-hidden="true"></div>
+
+<script>
+(function(){
+  'use strict';
+  var fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
+  var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!fine || reduced) return;
+  document.body.classList.add('fx');
+
+  var mx = innerWidth/2, my = innerHeight/2;
+
+  /* ---- custom cursor: dot snaps, ring lags ---- */
+  var dot = document.querySelector('.cursor-dot');
+  var ring = document.querySelector('.cursor-ring');
+  var rx = mx, ry = my;
+  addEventListener('mousemove', function(e){
+    mx = e.clientX; my = e.clientY;
+    dot.style.transform = 'translate(' + mx + 'px,' + my + 'px)';
+  }, {passive:true});
+  (function ringLoop(){
+    rx += (mx - rx) * 0.16;
+    ry += (my - ry) * 0.16;
+    ring.style.transform = 'translate(' + rx + 'px,' + ry + 'px)';
+    requestAnimationFrame(ringLoop);
+  })();
+  // ring expands over interactive elements
+  document.querySelectorAll('a, button, .btn, .card, .photo-frame').forEach(function(el){
+    el.addEventListener('mouseenter', function(){ ring.classList.add('on'); });
+    el.addEventListener('mouseleave', function(){ ring.classList.remove('on'); });
+  });
+
+  /* ---- card spotlight follows the mouse ---- */
+  document.querySelectorAll('.card').forEach(function(card){
+    card.addEventListener('mousemove', function(e){
+      var r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    }, {passive:true});
+  });
+
+  /* ---- magnetic buttons ---- */
+  document.querySelectorAll('.btn').forEach(function(btn){
+    btn.addEventListener('mousemove', function(e){
+      var r = btn.getBoundingClientRect();
+      var dx = e.clientX - (r.left + r.width/2);
+      var dy = e.clientY - (r.top + r.height/2);
+      btn.style.translate = (dx * 0.22) + 'px ' + (dy * 0.32 - 3) + 'px';
+    }, {passive:true});
+    btn.addEventListener('mouseleave', function(){
+      btn.style.translate = '';
+    });
+  });
+
+  /* ---- 3D tilt: terminal + avatar ---- */
+  function tilt(target, surface, max){
+    surface.style.transition = 'transform .18s ease-out';
+    target.addEventListener('mousemove', function(e){
+      var r = target.getBoundingClientRect();
+      var px = (e.clientX - r.left) / r.width  - 0.5;
+      var py = (e.clientY - r.top)  / r.height - 0.5;
+      surface.style.transform = 'perspective(900px) rotateX(' + (-py * max) + 'deg) rotateY(' + (px * max) + 'deg)';
+    }, {passive:true});
+    target.addEventListener('mouseleave', function(){
+      surface.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg)';
+    });
+  }
+  var tw = document.querySelector('.tilt-wrap');
+  if (tw) tilt(tw, tw, 5);
+  var av = document.querySelector('.photo-frame');
+  var avInner = document.querySelector('.avatar-inner');
+  if (av && avInner) tilt(av, avInner, 8);
+
+  /* ---- background reacts to the mouse (composes with CSS animations) ---- */
+  var aurora = document.querySelector('.aurora');
+  var blobs = document.querySelectorAll('.blob');
+  var ticking = false;
+  addEventListener('mousemove', function(){
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function(){
+      var nx = (mx / innerWidth  - 0.5);
+      var ny = (my / innerHeight - 0.5);
+      if (aurora) aurora.style.translate = (nx * -30) + 'px ' + (ny * -30) + 'px';
+      blobs.forEach(function(b, i){
+        var f = [22, 34, 16][i] || 20;
+        b.style.translate = (nx * f) + 'px ' + (ny * f) + 'px';
+      });
+      ticking = false;
+    });
+  }, {passive:true});
+})();
+</script>
 
 </body>
 </html>
