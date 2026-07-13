@@ -158,6 +158,15 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--mauve);outline-offs
 .sh2{top:34%;animation-duration:14s;animation-delay:8s}
 .sh3{top:16%;animation-duration:17s;animation-delay:13s;transform:rotate(16deg) scaleX(.7)}
 
+/* ---------- 3D particle canvas ---------- */
+#bg3d{position:absolute;inset:0;width:100%;height:100%}
+/* 3D depth layers inside cards */
+.card-3d{transform-style:preserve-3d;will-change:transform}
+.card-3d .ptag{transform:translateZ(24px)}
+.card-3d h3{transform:translateZ(30px)}
+.card-3d p{transform:translateZ(16px)}
+.card-3d .tech{transform:translateZ(22px)}
+
 /* ---------- nav ---------- */
 nav{
   position:fixed;top:0;left:0;right:0;z-index:50;
@@ -283,19 +292,19 @@ section{max-width:var(--maxw);margin:0 auto;padding:90px 24px}
   @keyframes reveal{to{opacity:1;transform:translateY(0);filter:blur(0)}}
 
   .reveal-left{
-    opacity:0;transform:translateX(-60px) rotateY(10deg);filter:blur(4px);
+    opacity:0;transform:translateX(-90px) rotateY(28deg) translateZ(-90px);filter:blur(4px);
     animation:revealXL .8s cubic-bezier(.2,.8,.2,1) forwards;
     animation-timeline:view();
     animation-range:entry 0% entry 48%;
   }
   .reveal-right{
-    opacity:0;transform:translateX(60px) rotateY(-10deg);filter:blur(4px);
+    opacity:0;transform:translateX(90px) rotateY(-28deg) translateZ(-90px);filter:blur(4px);
     animation:revealXR .8s cubic-bezier(.2,.8,.2,1) forwards;
     animation-timeline:view();
     animation-range:entry 0% entry 48%;
   }
-  @keyframes revealXL{to{opacity:1;transform:translateX(0) rotateY(0);filter:blur(0)}}
-  @keyframes revealXR{to{opacity:1;transform:translateX(0) rotateY(0);filter:blur(0)}}
+  @keyframes revealXL{to{opacity:1;transform:translateX(0) rotateY(0) translateZ(0);filter:blur(0)}}
+  @keyframes revealXR{to{opacity:1;transform:translateX(0) rotateY(0) translateZ(0);filter:blur(0)}}
   .grid{perspective:1200px}
 
   .reveal-scale{
@@ -391,19 +400,57 @@ section{max-width:var(--maxw);margin:0 auto;padding:90px 24px}
   @keyframes heroExit{to{opacity:.15;transform:translateY(-60px) scale(.96)}}
 }
 
-/* ---------- stack marquee ---------- */
-.marquee{border-block:1px solid var(--surface0);background:var(--mantle);overflow:hidden;padding:16px 0;position:relative}
-.marquee::before,.marquee::after{content:'';position:absolute;top:0;bottom:0;width:120px;z-index:2;pointer-events:none}
-.marquee::before{left:0;background:linear-gradient(90deg,var(--base),transparent)}
-.marquee::after{right:0;background:linear-gradient(-90deg,var(--base),transparent)}
-.track{display:flex;gap:44px;width:max-content;animation:scroll 30s linear infinite;font-family:var(--mono);font-size:.85rem;color:var(--subtext)}
-.marquee:hover .track{animation-play-state:paused}
-.track span::before{content:'◆ ';font-size:.6rem;vertical-align:middle}
-.track span:nth-child(4n+1)::before{color:var(--mauve)}
-.track span:nth-child(4n+2)::before{color:var(--blue)}
-.track span:nth-child(4n+3)::before{color:var(--green)}
-.track span:nth-child(4n+4)::before{color:var(--peach)}
-@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+/* ---------- 3D depth conveyor — tech showcase ---------- */
+.belt-wrap{
+  position:relative;height:140px;overflow:hidden;
+  border-block:1px solid var(--surface0);
+  background:
+    radial-gradient(340px 90px at 50% 58%, rgba(203,166,247,.09), transparent 70%),
+    var(--mantle);
+}
+.belt-wrap::before,.belt-wrap::after{
+  content:'';position:absolute;top:0;bottom:0;width:180px;z-index:10;pointer-events:none;
+}
+.belt-wrap::before{left:0;background:linear-gradient(90deg,var(--base),transparent)}
+.belt-wrap::after{right:0;background:linear-gradient(-90deg,var(--base),transparent)}
+.belt-wrap:hover .belt span{animation-play-state:paused}
+.belt span{
+  position:absolute;left:50%;top:50%;
+  display:flex;align-items:center;gap:9px;white-space:nowrap;
+  font-family:var(--mono);font-size:.86rem;color:var(--text);
+  background:linear-gradient(180deg,rgba(49,50,68,.95),rgba(24,24,37,.96));
+  border:1px solid var(--surface1);border-radius:12px;
+  padding:11px 22px;
+  box-shadow:0 16px 34px -16px rgba(17,17,27,.85), inset 0 1px 0 rgba(205,214,244,.07);
+  animation:belt 26s linear infinite;
+  animation-delay:calc(var(--i) * (26s / -12));
+  will-change:transform,opacity;
+}
+.belt span::before{content:'\25c6';font-size:.55rem;color:var(--dc,var(--mauve))}
+.belt span:nth-child(4n+1){--dc:var(--mauve)}
+.belt span:nth-child(4n+2){--dc:var(--blue)}
+.belt span:nth-child(4n+3){--dc:var(--green)}
+.belt span:nth-child(4n+4){--dc:var(--peach)}
+@keyframes belt{
+  0%{
+    transform:translate(calc(-50% + min(54vw, 640px)), calc(-50% + 10px)) scale(.5);
+    opacity:0;filter:blur(3px);z-index:1;
+  }
+  14%{opacity:.8;filter:blur(.6px)}
+  50%{
+    transform:translate(-50%, calc(-50% - 10px)) scale(1.16);
+    opacity:1;filter:blur(0);z-index:6;
+  }
+  86%{opacity:.8;filter:blur(.6px)}
+  100%{
+    transform:translate(calc(-50% - min(54vw, 640px)), calc(-50% + 10px)) scale(.5);
+    opacity:0;filter:blur(3px);z-index:1;
+  }
+}
+@media(max-width:700px){
+  .belt-wrap{height:110px}
+  .belt span{font-size:.72rem;padding:9px 16px}
+}
 
 /* ---------- projects ---------- */
 .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:26px}
@@ -412,7 +459,7 @@ section{max-width:var(--maxw);margin:0 auto;padding:90px 24px}
   background:var(--mantle);
   border:1px solid var(--surface0);
   border-radius:var(--radius);
-  padding:30px 28px;
+  padding:0;
   position:relative;
   overflow:hidden;
   transition:translate .35s cubic-bezier(.2,.8,.2,1),border-color .35s,box-shadow .35s;
@@ -441,6 +488,21 @@ section{max-width:var(--maxw);margin:0 auto;padding:90px 24px}
 .c-loop{--accent:var(--blue)}
 .c-emenu{--accent:var(--yellow)}
 .c-pos{--accent:var(--pink)}
+
+/* terminal chrome for project cards */
+.card-bar{
+  display:flex;align-items:center;gap:7px;padding:11px 16px;
+  background:var(--crust);border-bottom:1px solid var(--surface0);
+  font-family:var(--mono);
+}
+.card-bar .dot{width:10px;height:10px}
+.card-bar .win-title{margin-left:auto;margin-right:auto;font-size:.66rem;color:var(--overlay)}
+.card-body{padding:22px 28px 28px;transform-style:preserve-3d}
+.cmdrow{font-family:var(--mono);font-size:.74rem;color:var(--subtext0);margin-bottom:12px}
+.cmdrow .chev{color:var(--mauve);margin:0 6px 0 0}
+.cmdrow .c-name{color:var(--green)}
+.card-3d .card-bar{transform:translateZ(12px)}
+.card-3d .cmdrow{transform:translateZ(18px)}
 
 /* ---------- about ---------- */
 .about-grid{display:grid;grid-template-columns:auto 1.2fr .8fr;gap:50px;align-items:start}
@@ -568,6 +630,7 @@ footer .heart{color:var(--red)}
 
 <div class="ambient" aria-hidden="true">
   <div class="aurora"></div>
+  <canvas id="bg3d"></canvas>
   <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
   <span class="particle p1"></span><span class="particle p2m"></span><span class="particle p3m"></span>
   <span class="particle p4"></span><span class="particle p5"></span><span class="particle p6"></span>
@@ -640,14 +703,20 @@ footer .heart{color:var(--red)}
   </div>
 </header>
 
-<div class="marquee" aria-hidden="true">
-  <div class="track">
-    <span>Laravel</span><span>Vue 3</span><span>React Native</span><span>Expo</span>
-    <span>MySQL</span><span>Redis</span><span>Nginx</span><span>SQL Server</span>
-    <span>Pinia</span><span>Vuetify</span><span>Sanctum</span><span>Firebase</span>
-    <span>Laravel</span><span>Vue 3</span><span>React Native</span><span>Expo</span>
-    <span>MySQL</span><span>Redis</span><span>Nginx</span><span>SQL Server</span>
-    <span>Pinia</span><span>Vuetify</span><span>Sanctum</span><span>Firebase</span>
+<div class="belt-wrap" aria-hidden="true">
+  <div class="belt">
+    <span style="--i:0">Laravel</span>
+    <span style="--i:1">Vue 3</span>
+    <span style="--i:2">React Native</span>
+    <span style="--i:3">Expo</span>
+    <span style="--i:4">MySQL</span>
+    <span style="--i:5">Redis</span>
+    <span style="--i:6">Nginx</span>
+    <span style="--i:7">SQL Server</span>
+    <span style="--i:8">Pinia</span>
+    <span style="--i:9">Vuetify</span>
+    <span style="--i:10">Sanctum</span>
+    <span style="--i:11">Firebase</span>
   </div>
 </div>
 
@@ -659,40 +728,64 @@ footer .heart{color:var(--red)}
   </div>
   <div class="grid">
     <article class="card c-emenu reveal-left">
+      <div class="card-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="win-title">aron@dev:~/projects/e-menu — zsh</span></div>
+      <div class="card-body">
+      <div class="cmdrow"><span class="chev">❯</span><span class="c-name">cat</span> readme.md</div>
       <span class="ptag">E-Menu · Restaurant SaaS</span>
       <h3>E-Menu Ordering Platform</h3>
       <p>QR-code table ordering for restaurants — diners scan, browse the menu, and order from their phone while staff see orders arrive in real time. Multi-tenant with per-restaurant branding and theme customization.</p>
       <div class="tech"><span>Laravel</span><span>Vue 3</span><span>Redis</span><span>AWS EC2</span><span>Cloudflare</span></div>
+          </div>
     </article>
     <article class="card c-hris reveal-right">
+      <div class="card-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="win-title">aron@dev:~/projects/hris — zsh</span></div>
+      <div class="card-body">
+      <div class="cmdrow"><span class="chev">❯</span><span class="c-name">cat</span> readme.md</div>
       <span class="ptag">HRIS</span>
       <h3>Human Resources Information System</h3>
       <p>A complete human resources platform: role-based access control, payroll processing, biometric attendance with ZKTeco devices, loyalty award tracking, and audit logging — built for offices.</p>
       <div class="tech"><span>Laravel</span><span>Vue 3</span><span>MySQL</span><span>Redis</span><span>ZKTeco</span></div>
+          </div>
     </article>
     <article class="card c-pos reveal-left">
+      <div class="card-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="win-title">aron@dev:~/projects/pos — zsh</span></div>
+      <div class="card-body">
+      <div class="cmdrow"><span class="chev">❯</span><span class="c-name">cat</span> readme.md</div>
       <span class="ptag">POS · Retail</span>
       <h3>Point of Sale System</h3>
       <p>A sales and inventory platform for day-to-day store operations — fast checkout, stock tracking with low-inventory alerts, receipt printing, and daily sales reports that give owners a clear picture of the business.</p>
       <div class="tech"><span>Laravel</span><span>Vue 3</span><span>MySQL</span><span>Redis</span></div>
+          </div>
     </article>
     <article class="card c-doh reveal-right">
+      <div class="card-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="win-title">aron@dev:~/projects/job-portal — zsh</span></div>
+      <div class="card-body">
+      <div class="cmdrow"><span class="chev">❯</span><span class="c-name">cat</span> readme.md</div>
       <span class="ptag">Job Portal</span>
       <h3>Applicant Management System</h3>
       <p>A job application and recruitment portal hardened through systematic security remediation.</p>
       <div class="tech"><span>Laravel</span><span>Nginx</span><span>Security</span><span>ZAP</span></div>
+          </div>
     </article>
     <article class="card c-tsa reveal-left">
+      <div class="card-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="win-title">aron@dev:~/projects/payroll — zsh</span></div>
+      <div class="card-body">
+      <div class="cmdrow"><span class="chev">❯</span><span class="c-name">cat</span> readme.md</div>
       <span class="ptag">Payroll · Enterprise</span>
       <h3>Payroll</h3>
       <p>Payroll system including a 22-column payroll register PDF matched precisely to the company's existing Excel workflow — deductions, loans, and all.</p>
       <div class="tech"><span>Laravel</span><span>Blade PDF</span><span>Vue 3</span><span>MySQL</span></div>
+          </div>
     </article>
     <article class="card c-loop reveal-right">
+      <div class="card-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="win-title">aron@dev:~/projects/local-loop — zsh</span></div>
+      <div class="card-body">
+      <div class="cmdrow"><span class="chev">❯</span><span class="c-name">cat</span> readme.md</div>
       <span class="ptag">Mobile · Community</span>
       <h3>Local Loop</h3>
       <p>A local services mobile app with real-time chat on Firebase, push notifications, provider ID verification, and offline-capable flows — shipped through EAS builds.</p>
       <div class="tech"><span>React Native</span><span>Expo</span><span>Firebase</span><span>Sanctum API</span></div>
+          </div>
     </article>
   </div>
 </section>
@@ -760,10 +853,88 @@ footer .heart{color:var(--red)}
   'use strict';
   var fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
   var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var mx = innerWidth/2, my = innerHeight/2;
+
+  /* ================================================================
+     3D PARTICLE CONSTELLATION — rotating point cloud with depth
+     (runs on all devices; auto-rotates, follows mouse when present)
+  ================================================================ */
+  if (!reduced) (function(){
+    var cv = document.getElementById('bg3d');
+    if (!cv) return;
+    var ctx = cv.getContext('2d');
+    var W, H, CX, CY, dpr = Math.min(devicePixelRatio || 1, 2);
+    function size(){
+      W = cv.clientWidth; H = cv.clientHeight;
+      cv.width = W * dpr; cv.height = H * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      CX = W/2; CY = H/2;
+    }
+    size();
+    addEventListener('resize', size, {passive:true});
+
+    var COLORS = ['203,166,247','137,180,250','148,226,213','166,227,161','180,190,254'];
+    var N = Math.min(110, Math.floor(innerWidth / 12));
+    var R = 520;                       // cloud radius
+    var FOV = 640;                     // perspective strength
+    var pts = [];
+    for (var i = 0; i < N; i++){
+      pts.push({
+        x:(Math.random()*2-1)*R,
+        y:(Math.random()*2-1)*R*0.62,
+        z:(Math.random()*2-1)*R,
+        c:COLORS[(Math.random()*COLORS.length)|0],
+        s:Math.random()*1.6+0.8
+      });
+    }
+
+    var rotY = 0, rotX = 0, tgtY = 0, tgtX = 0;
+    function frame(t){
+      // base auto-rotation + eased mouse influence
+      tgtY = (mx/innerWidth  - 0.5) * 0.55;
+      tgtX = (my/innerHeight - 0.5) * 0.35;
+      rotY += ((t*0.00006 + tgtY) - rotY) * 0.03;
+      rotX += (tgtX - rotX) * 0.03;
+
+      var cy = Math.cos(rotY), sy = Math.sin(rotY);
+      var cx = Math.cos(rotX), sx = Math.sin(rotX);
+      ctx.clearRect(0, 0, W, H);
+
+      var proj = [];
+      for (var i = 0; i < N; i++){
+        var p = pts[i];
+        var x1 = p.x*cy - p.z*sy, z1 = p.x*sy + p.z*cy;   // rotate Y
+        var y1 = p.y*cx - z1*sx,  z2 = p.y*sx + z1*cx;    // rotate X
+        var f = FOV / (FOV + z2 + R);                     // keep in front
+        proj.push({x:CX + x1*f, y:CY + y1*f, f:f, c:p.c, s:p.s});
+      }
+      // constellation lines between near points
+      for (i = 0; i < N; i++){
+        for (var j = i+1; j < N; j++){
+          var a = proj[i], b = proj[j];
+          var dx = a.x-b.x, dy = a.y-b.y, d2 = dx*dx + dy*dy;
+          if (d2 < 12000){
+            ctx.strokeStyle = 'rgba(108,112,134,' + (0.20 * (1 - d2/12000) * a.f) + ')';
+            ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+          }
+        }
+      }
+      // depth-shaded dots
+      for (i = 0; i < N; i++){
+        var q = proj[i];
+        ctx.fillStyle = 'rgba(' + q.c + ',' + (0.16 + q.f*0.45) + ')';
+        ctx.beginPath();
+        ctx.arc(q.x, q.y, q.s * q.f * 1.8, 0, 6.2832);
+        ctx.fill();
+      }
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  })();
+
   if (!fine || reduced) return;
   document.body.classList.add('fx');
-
-  var mx = innerWidth/2, my = innerHeight/2;
 
   /* ---- custom cursor: dot snaps, ring lags ---- */
   var dot = document.querySelector('.cursor-dot');
@@ -825,6 +996,15 @@ footer .heart{color:var(--red)}
   var av = document.querySelector('.photo-frame');
   var avInner = document.querySelector('.avatar-inner');
   if (av && avInner) tilt(av, avInner, 8);
+
+  /* ---- cards: wrap content and tilt in 3D with layered depth ---- */
+  document.querySelectorAll('.card').forEach(function(card){
+    var wrap = document.createElement('div');
+    wrap.className = 'card-3d';
+    while (card.firstChild) wrap.appendChild(card.firstChild);
+    card.appendChild(wrap);
+    tilt(card, wrap, 4);
+  });
 
   /* ---- background reacts to the mouse (composes with CSS animations) ---- */
   var aurora = document.querySelector('.aurora');
