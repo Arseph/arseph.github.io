@@ -20,10 +20,16 @@
   --mono:'JetBrains Mono',monospace;
   --body:'Karla',sans-serif;
   --radius:14px;
+  --mauve-rgb:203,166,247; --blue-rgb:137,180,250; --teal-rgb:148,226,213;
+  --green-rgb:166,227,161; --pink-rgb:245,194,231; --lavender-rgb:180,190,254;
+  --shadow-rgb:17,17,27; --mantle-rgb:24,24,37; --surface0-rgb:49,50,68;
+  --surface1-rgb:69,71,90; --surface2-rgb:88,91,112; --overlay-rgb:108,112,134;
+  --text-rgb:205,214,244;
   --maxw:1080px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;overflow-x:hidden;width:100%}
+img,canvas,svg,video{max-width:100%}
 body{
   background:var(--base);
   color:var(--text);
@@ -31,10 +37,67 @@ body{
   font-size:17px;
   line-height:1.65;
   overflow-x:hidden;
+  width:100%;
+  position:relative;
 }
 ::selection{background:var(--mauve);color:var(--crust)}
 a{color:var(--blue);text-decoration:none}
 a:focus-visible,button:focus-visible{outline:2px solid var(--mauve);outline-offset:3px;border-radius:4px}
+
+
+/* ---------- Catppuccin flavors ---------- */
+[data-theme="latte"]{
+  --crust:#dce0e8; --mantle:#e6e9ef; --base:#eff1f5;
+  --surface0:#ccd0da; --surface1:#bcc0cc; --surface2:#acb0be;
+  --overlay:#8c8fa1;
+  --text:#4c4f69; --subtext:#5c5f77; --subtext0:#6c6f85;
+  --mauve:#8839ef; --blue:#1e66f5; --green:#40a02b; --peach:#fe640b;
+  --pink:#ea76cb; --yellow:#df8e1d; --red:#d20f39; --teal:#179299; --lavender:#7287fd;
+  --mauve-rgb:136,57,239; --blue-rgb:30,102,245; --teal-rgb:23,146,153;
+  --green-rgb:64,160,43; --pink-rgb:234,118,203; --lavender-rgb:114,135,253;
+  --shadow-rgb:76,79,105; --mantle-rgb:230,233,239; --surface0-rgb:204,208,218;
+  --surface1-rgb:188,192,204; --surface2-rgb:172,176,190; --overlay-rgb:140,143,161;
+  --text-rgb:76,79,105;
+}
+[data-theme="frappe"]{
+  --crust:#232634; --mantle:#292c3c; --base:#303446;
+  --surface0:#414559; --surface1:#51576d; --surface2:#626880;
+  --overlay:#737994;
+  --text:#c6d0f5; --subtext:#b5bfe2; --subtext0:#a5adce;
+  --mauve:#ca9ee6; --blue:#8caaee; --green:#a6d189; --peach:#ef9f76;
+  --pink:#f4b8e4; --yellow:#e5c890; --red:#e78284; --teal:#81c8be; --lavender:#babbf1;
+  --mauve-rgb:202,158,230; --blue-rgb:140,170,238; --teal-rgb:129,200,190;
+  --green-rgb:166,209,137; --pink-rgb:244,184,228; --lavender-rgb:186,187,241;
+  --shadow-rgb:35,38,52; --mantle-rgb:41,44,60; --surface0-rgb:65,69,89;
+  --surface1-rgb:81,87,109; --surface2-rgb:98,104,128; --overlay-rgb:115,121,148;
+  --text-rgb:198,208,245;
+}
+[data-theme="macchiato"]{
+  --crust:#181926; --mantle:#1e2030; --base:#24273a;
+  --surface0:#363a4f; --surface1:#494d64; --surface2:#5b6078;
+  --overlay:#6e738d;
+  --text:#cad3f5; --subtext:#b8c0e0; --subtext0:#a5adcb;
+  --mauve:#c6a0f6; --blue:#8aadf4; --green:#a6da95; --peach:#f5a97f;
+  --pink:#f5bde6; --yellow:#eed49f; --red:#ed8796; --teal:#8bd5ca; --lavender:#b7bdf8;
+  --mauve-rgb:198,160,246; --blue-rgb:138,173,244; --teal-rgb:139,213,202;
+  --green-rgb:166,218,149; --pink-rgb:245,189,230; --lavender-rgb:183,189,248;
+  --shadow-rgb:24,25,38; --mantle-rgb:30,32,48; --surface0-rgb:54,58,79;
+  --surface1-rgb:73,77,100; --surface2-rgb:91,96,120; --overlay-rgb:110,115,141;
+  --text-rgb:202,211,245;
+}
+body{transition:background-color .4s ease, color .4s ease}
+
+/* theme swatches in nav */
+.themes{display:flex;gap:9px;align-items:center;margin-left:20px}
+.tswatch{
+  width:17px;height:17px;border-radius:50%;cursor:pointer;padding:0;
+  border:2px solid var(--surface1);
+  background:linear-gradient(135deg, var(--sw) 50%, var(--sd) 50%);
+  transition:transform .25s cubic-bezier(.34,1.6,.4,1), border-color .25s, box-shadow .25s;
+}
+.tswatch:hover{transform:scale(1.25)}
+.tswatch.active{border-color:var(--mauve);box-shadow:0 0 0 3px rgba(var(--mauve-rgb),.25);transform:scale(1.15)}
+@media(max-width:640px){.themes{margin-left:10px;gap:7px}.tswatch{width:14px;height:14px}}
 
 /* ---------- scroll progress bar ---------- */
 .scroll-progress{
@@ -49,15 +112,15 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--mauve);outline-offs
 
 /* ---------- ambient background ---------- */
 .ambient{position:fixed;inset:0;z-index:-1;overflow:hidden;background:
-  radial-gradient(ellipse 60% 40% at 15% 10%, rgba(203,166,247,.10), transparent 60%),
-  radial-gradient(ellipse 50% 40% at 85% 85%, rgba(137,180,250,.08), transparent 60%),
+  radial-gradient(ellipse 60% 40% at 15% 10%, rgba(var(--mauve-rgb),.10), transparent 60%),
+  radial-gradient(ellipse 50% 40% at 85% 85%, rgba(var(--blue-rgb),.08), transparent 60%),
   var(--base);}
 /* subtle drifting grid */
 .ambient::before{
   content:'';position:absolute;inset:-100px;
   background-image:
-    linear-gradient(rgba(88,91,112,.14) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(88,91,112,.14) 1px, transparent 1px);
+    linear-gradient(rgba(var(--surface2-rgb),.14) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--surface2-rgb),.14) 1px, transparent 1px);
   background-size:56px 56px;
   mask-image:radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 75%);
   -webkit-mask-image:radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 75%);
@@ -68,8 +131,8 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--mauve);outline-offs
 .aurora{
   position:absolute;top:-40%;left:-25%;width:150%;height:120%;
   background:conic-gradient(from 0deg at 50% 50%,
-    rgba(203,166,247,.16), rgba(137,180,250,.12), rgba(148,226,213,.14),
-    rgba(166,227,161,.10), rgba(245,194,231,.14), rgba(203,166,247,.16));
+    rgba(var(--mauve-rgb),.16), rgba(var(--blue-rgb),.12), rgba(var(--teal-rgb),.14),
+    rgba(var(--green-rgb),.10), rgba(var(--pink-rgb),.14), rgba(var(--mauve-rgb),.16));
   filter:blur(110px);
   animation:auroraSpin 60s linear infinite, auroraBreathe 14s ease-in-out infinite alternate;
 }
@@ -77,9 +140,9 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--mauve);outline-offs
 @keyframes auroraBreathe{from{opacity:.5}to{opacity:.95}}
 .blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.35;animation-name:drift1,hueShift;animation-duration:26s,20s;animation-timing-function:ease-in-out;animation-iteration-count:infinite;animation-direction:alternate}
 @keyframes hueShift{from{filter:blur(90px) hue-rotate(0deg)}to{filter:blur(90px) hue-rotate(40deg)}}
-.blob.b1{width:420px;height:420px;background:rgba(203,166,247,.22);top:-120px;left:-80px;animation:drift1 26s ease-in-out infinite alternate}
-.blob.b2{width:380px;height:380px;background:rgba(137,180,250,.18);bottom:-100px;right:-60px;animation:drift2 32s ease-in-out infinite alternate}
-.blob.b3{width:260px;height:260px;background:rgba(166,227,161,.12);top:40%;left:60%;animation:drift1 38s ease-in-out infinite alternate-reverse}
+.blob.b1{width:420px;height:420px;background:rgba(var(--mauve-rgb),.22);top:-120px;left:-80px;animation:drift1 26s ease-in-out infinite alternate}
+.blob.b2{width:380px;height:380px;background:rgba(var(--blue-rgb),.18);bottom:-100px;right:-60px;animation:drift2 32s ease-in-out infinite alternate}
+.blob.b3{width:260px;height:260px;background:rgba(var(--green-rgb),.12);top:40%;left:60%;animation:drift1 38s ease-in-out infinite alternate-reverse}
 @keyframes drift1{from{transform:translate(0,0) scale(1)}to{transform:translate(90px,60px) scale(1.15)}}
 @keyframes drift2{from{transform:translate(0,0) scale(1)}to{transform:translate(-70px,-50px) scale(1.1)}}
 /* floating particles */
@@ -134,21 +197,21 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--mauve);outline-offs
   85%{opacity:.15}
   100%{transform:translateY(-115vh) rotate(14deg);opacity:0}
 }
-.g1{left:9%;font-size:1.2rem;animation-duration:32s;animation-delay:1s;color:rgba(203,166,247,.5)}
+.g1{left:9%;font-size:1.2rem;animation-duration:32s;animation-delay:1s;color:rgba(var(--mauve-rgb),.5)}
 .g2{left:22%;font-size:.9rem;animation-duration:38s;animation-delay:8s}
-.g3{left:35%;font-size:1.4rem;animation-duration:30s;animation-delay:15s;color:rgba(137,180,250,.45)}
+.g3{left:35%;font-size:1.4rem;animation-duration:30s;animation-delay:15s;color:rgba(var(--blue-rgb),.45)}
 .g4{left:52%;font-size:1rem;animation-duration:36s;animation-delay:4s}
-.g5{left:63%;font-size:1.3rem;animation-duration:33s;animation-delay:12s;color:rgba(148,226,213,.45)}
+.g5{left:63%;font-size:1.3rem;animation-duration:33s;animation-delay:12s;color:rgba(var(--teal-rgb),.45)}
 .g6{left:74%;font-size:.95rem;animation-duration:40s;animation-delay:19s}
-.g7{left:83%;font-size:1.15rem;animation-duration:34s;animation-delay:6s;color:rgba(166,227,161,.45)}
-.g8{left:94%;font-size:1rem;animation-duration:37s;animation-delay:23s;color:rgba(245,194,231,.4)}
+.g7{left:83%;font-size:1.15rem;animation-duration:34s;animation-delay:6s;color:rgba(var(--green-rgb),.45)}
+.g8{left:94%;font-size:1rem;animation-duration:37s;animation-delay:23s;color:rgba(var(--pink-rgb),.4)}
 /* shooting stars */
 .shoot{
   position:absolute;left:-15%;width:130px;height:2px;border-radius:2px;
-  background:linear-gradient(90deg,transparent,rgba(180,190,254,.9));
+  background:linear-gradient(90deg,transparent,rgba(var(--lavender-rgb),.9));
   opacity:0;animation:shoot linear infinite;
 }
-.shoot::after{content:'';position:absolute;right:-2px;top:-2px;width:6px;height:6px;border-radius:50%;background:var(--lavender);box-shadow:0 0 14px 3px rgba(180,190,254,.8)}
+.shoot::after{content:'';position:absolute;right:-2px;top:-2px;width:6px;height:6px;border-radius:50%;background:var(--lavender);box-shadow:0 0 14px 3px rgba(var(--lavender-rgb),.8)}
 @keyframes shoot{
   0%,86%{opacity:0;transform:translate(0,0) rotate(16deg)}
   88%{opacity:1}
@@ -167,16 +230,22 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--mauve);outline-offs
 .card-3d p{transform:translateZ(16px)}
 .card-3d .tech{transform:translateZ(22px)}
 
+/* min-content guards — grids and flex children can never widen the page */
+.hero,.grid,.about-grid,.sec-head,.stat-stack{min-width:0;max-width:100%}
+.hero > *,.grid > *,.about-grid > *,.stat-stack > *{min-width:0;max-width:100%}
+.tilt-wrap,.terminal,.skill-term,.card,.timeline{max-width:100%}
+
 /* ---------- nav ---------- */
 nav{
   position:fixed;top:0;left:0;right:0;z-index:50;
   backdrop-filter:blur(14px);
-  background:rgba(24,24,37,.72);
-  border-bottom:1px solid rgba(69,71,90,.6);
+  background:rgba(var(--mantle-rgb),.72);
+  border-bottom:1px solid rgba(var(--surface1-rgb),.6);
   animation:navIn .8s cubic-bezier(.2,.8,.2,1) both;
 }
 @keyframes navIn{from{transform:translateY(-100%)}to{transform:translateY(0)}}
-.nav-inner{max-width:var(--maxw);margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+.nav-inner{max-width:var(--maxw);margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.nav-links{margin-left:auto}
 .logo{font-family:var(--mono);font-weight:700;font-size:.95rem;color:var(--text)}
 .logo .tilde{color:var(--mauve)}
 .logo .slash{color:var(--overlay)}
@@ -186,7 +255,31 @@ nav{
 .nav-links a::after{content:'';position:absolute;left:0;right:0;bottom:-4px;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--mauve),var(--blue));transform:scaleX(0);transform-origin:left;transition:transform .3s cubic-bezier(.2,.8,.2,1)}
 .nav-links a:hover{color:var(--mauve)}
 .nav-links a:hover::after{transform:scaleX(1)}
-@media(max-width:640px){.nav-links{gap:14px;font-size:.7rem}}
+.nav-burger{display:none}
+@media(max-width:640px){
+  .nav-burger{
+    display:flex;flex-direction:column;justify-content:center;gap:4.5px;
+    width:38px;height:38px;padding:8px;align-items:center;
+    background:none;border:1px solid var(--surface1);border-radius:9px;cursor:pointer;
+  }
+  .nav-burger span{display:block;width:18px;height:2px;background:var(--text);border-radius:2px;transition:transform .3s cubic-bezier(.2,.8,.2,1),opacity .25s}
+  nav.open .nav-burger span:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+  nav.open .nav-burger span:nth-child(2){opacity:0}
+  nav.open .nav-burger span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+  .nav-links{
+    position:absolute;top:100%;left:0;right:0;
+    flex-direction:column;gap:0;margin-left:0;
+    background:rgba(var(--mantle-rgb),.96);backdrop-filter:blur(16px);
+    border-bottom:1px solid var(--surface0);
+    padding:8px 0 14px;
+    opacity:0;transform:translateY(-10px);pointer-events:none;
+    transition:opacity .3s, transform .3s cubic-bezier(.2,.8,.2,1);
+  }
+  nav.open .nav-links{opacity:1;transform:translateY(0);pointer-events:auto}
+  .nav-links a{padding:13px 26px;font-size:.9rem}
+  .nav-links a::after{display:none}
+  .themes{margin-left:auto;margin-right:12px}
+}
 
 /* ---------- hero ---------- */
 .hero{max-width:var(--maxw);margin:0 auto;padding:150px 24px 90px;display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;min-height:92vh}
@@ -201,8 +294,8 @@ nav{
 @keyframes rise{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:translateY(0)}}
 
 .eyebrow{font-family:var(--mono);font-size:.8rem;color:var(--green);letter-spacing:.06em;display:inline-flex;align-items:center;gap:10px}
-.eyebrow::before{content:'';width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(166,227,161,.6);animation:pulse 2.2s infinite}
-@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(166,227,161,.55)}70%{box-shadow:0 0 0 11px rgba(166,227,161,0)}100%{box-shadow:0 0 0 0 rgba(166,227,161,0)}}
+.eyebrow::before{content:'';width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(var(--green-rgb),.6);animation:pulse 2.2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(var(--green-rgb),.55)}70%{box-shadow:0 0 0 11px rgba(var(--green-rgb),0)}100%{box-shadow:0 0 0 0 rgba(var(--green-rgb),0)}}
 
 h1{font-family:var(--display);font-weight:800;font-size:clamp(2.6rem,6vw,4.3rem);line-height:1.06;letter-spacing:-.02em;margin:18px 0 8px}
 h1 .grad{background:linear-gradient(120deg,var(--mauve),var(--blue) 45%,var(--teal) 90%);background-size:200% 200%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:gradShift 7s ease-in-out infinite}
@@ -214,8 +307,8 @@ h1 .grad{background:linear-gradient(120deg,var(--mauve),var(--blue) 45%,var(--te
 .cta-row{display:flex;gap:14px;margin-top:30px;flex-wrap:wrap}
 .btn{font-family:var(--mono);font-size:.85rem;font-weight:500;padding:13px 24px;border-radius:10px;display:inline-flex;align-items:center;gap:9px;transition:translate .25s cubic-bezier(.2,.8,.2,1),box-shadow .25s;cursor:pointer;border:none}
 .btn-primary{background:var(--mauve);color:var(--crust);animation:glowPulse 3.2s ease-in-out infinite}
-@keyframes glowPulse{0%,100%{box-shadow:0 0 0 0 rgba(203,166,247,.0)}50%{box-shadow:0 6px 26px -4px rgba(203,166,247,.5)}}
-.btn-primary:hover{translate:0 -3px;box-shadow:0 10px 30px -8px rgba(203,166,247,.55);animation:none}
+@keyframes glowPulse{0%,100%{box-shadow:0 0 0 0 rgba(var(--mauve-rgb),.0)}50%{box-shadow:0 6px 26px -4px rgba(var(--mauve-rgb),.5)}}
+.btn-primary:hover{translate:0 -3px;box-shadow:0 10px 30px -8px rgba(var(--mauve-rgb),.55);animation:none}
 .btn-ghost{background:transparent;color:var(--text);border:1px solid var(--surface1)}
 .btn-ghost:hover{translate:0 -3px;border-color:var(--mauve);color:var(--mauve)}
 
@@ -229,7 +322,7 @@ h1 .grad{background:linear-gradient(120deg,var(--mauve),var(--blue) 45%,var(--te
   background:var(--mantle);
   border:1px solid var(--surface0);
   border-radius:var(--radius);
-  box-shadow:0 28px 70px -22px rgba(17,17,27,.9), 0 0 0 1px rgba(203,166,247,.05);
+  box-shadow:0 28px 70px -22px rgba(var(--shadow-rgb),.9), 0 0 0 1px rgba(var(--mauve-rgb),.05);
   overflow:hidden;
   font-family:var(--mono);
   font-size:.83rem;
@@ -252,7 +345,7 @@ h1 .grad{background:linear-gradient(120deg,var(--mauve),var(--blue) 45%,var(--te
 
 .cmd{color:var(--text)}
 .cmd .c-name{color:var(--green)}
-.out{color:var(--subtext);white-space:pre-wrap}
+.out{color:var(--subtext);white-space:pre-wrap;overflow-wrap:anywhere}
 .out .k{color:var(--mauve)}
 .out .v{color:var(--peach)}
 .out .s{color:var(--green)}
@@ -400,56 +493,83 @@ section{max-width:var(--maxw);margin:0 auto;padding:90px 24px}
   @keyframes heroExit{to{opacity:.15;transform:translateY(-60px) scale(.96)}}
 }
 
-/* ---------- 3D depth conveyor — tech showcase ---------- */
-.belt-wrap{
-  position:relative;height:140px;overflow:hidden;
+/* ---------- skill install log — streaming terminal ---------- */
+.skills-strip{
   border-block:1px solid var(--surface0);
-  background:
-    radial-gradient(340px 90px at 50% 58%, rgba(203,166,247,.09), transparent 70%),
-    var(--mantle);
+  background:var(--mantle);
+  padding:34px 24px;
+  display:flex;justify-content:center;
+  perspective:1100px;
 }
-.belt-wrap::before,.belt-wrap::after{
-  content:'';position:absolute;top:0;bottom:0;width:180px;z-index:10;pointer-events:none;
+.skill-term{
+  width:100%;max-width:660px;
+  background:var(--crust);
+  border:1px solid var(--surface0);
+  border-radius:var(--radius);
+  overflow:hidden;
+  font-family:var(--mono);font-size:.8rem;
+  box-shadow:0 24px 60px -24px rgba(var(--shadow-rgb),.9);
+  transform:rotateX(7deg);
+  transition:transform .5s cubic-bezier(.2,.8,.2,1), box-shadow .5s;
 }
-.belt-wrap::before{left:0;background:linear-gradient(90deg,var(--base),transparent)}
-.belt-wrap::after{right:0;background:linear-gradient(-90deg,var(--base),transparent)}
-.belt-wrap:hover .belt span{animation-play-state:paused}
-.belt span{
-  position:absolute;left:50%;top:50%;
-  display:flex;align-items:center;gap:9px;white-space:nowrap;
-  font-family:var(--mono);font-size:.86rem;color:var(--text);
-  background:linear-gradient(180deg,rgba(49,50,68,.95),rgba(24,24,37,.96));
-  border:1px solid var(--surface1);border-radius:12px;
-  padding:11px 22px;
-  box-shadow:0 16px 34px -16px rgba(17,17,27,.85), inset 0 1px 0 rgba(205,214,244,.07);
-  animation:belt 26s linear infinite;
-  animation-delay:calc(var(--i) * (26s / -12));
-  will-change:transform,opacity;
+.skills-strip:hover .skill-term{
+  transform:rotateX(0deg);
+  box-shadow:0 30px 70px -24px rgba(var(--mauve-rgb),.35);
 }
-.belt span::before{content:'\25c6';font-size:.55rem;color:var(--dc,var(--mauve))}
-.belt span:nth-child(4n+1){--dc:var(--mauve)}
-.belt span:nth-child(4n+2){--dc:var(--blue)}
-.belt span:nth-child(4n+3){--dc:var(--green)}
-.belt span:nth-child(4n+4){--dc:var(--peach)}
-@keyframes belt{
-  0%{
-    transform:translate(calc(-50% + min(54vw, 640px)), calc(-50% + 10px)) scale(.5);
-    opacity:0;filter:blur(3px);z-index:1;
-  }
-  14%{opacity:.8;filter:blur(.6px)}
-  50%{
-    transform:translate(-50%, calc(-50% - 10px)) scale(1.16);
-    opacity:1;filter:blur(0);z-index:6;
-  }
-  86%{opacity:.8;filter:blur(.6px)}
-  100%{
-    transform:translate(calc(-50% - min(54vw, 640px)), calc(-50% + 10px)) scale(.5);
-    opacity:0;filter:blur(3px);z-index:1;
-  }
+.skill-term .st-bar{
+  display:flex;align-items:center;gap:8px;padding:10px 16px;
+  background:var(--mantle);border-bottom:1px solid var(--surface0);
 }
-@media(max-width:700px){
-  .belt-wrap{height:110px}
-  .belt span{font-size:.72rem;padding:9px 16px}
+.skill-term .st-bar .dot{width:10px;height:10px}
+.skill-term .st-title{margin-left:auto;margin-right:auto;color:var(--overlay);font-size:.68rem}
+.skill-term .st-cmd{padding:12px 18px 4px;color:var(--text)}
+.skill-term .st-cmd .chev{color:var(--mauve);margin-right:8px}
+.skill-term .st-cmd .c-name{color:var(--green)}
+.skill-term .st-cmd .flag{color:var(--peach)}
+.st-log{
+  position:relative;height:132px;overflow:hidden;padding:0 18px;
+  mask-image:linear-gradient(180deg,transparent,black 18%,black 78%,transparent);
+  -webkit-mask-image:linear-gradient(180deg,transparent,black 18%,black 78%,transparent);
+}
+.st-log ul{list-style:none;animation:logScroll 30s linear infinite}
+.skills-strip:hover .st-log ul{animation-play-state:paused}
+@keyframes logScroll{from{transform:translateY(0)}to{transform:translateY(-50%)}}
+.st-log li{line-height:2;white-space:nowrap;color:var(--subtext)}
+.st-log .ok{color:var(--green);margin-right:9px}
+.st-log .pkg{color:var(--pc,var(--text));font-weight:500}
+.st-log .ver{color:var(--overlay)}
+.st-log .fill-dots{color:var(--surface2);letter-spacing:2px;margin:0 8px}
+.st-log .done{color:var(--teal)}
+.st-log .t{color:var(--subtext0);margin-left:8px;font-size:.72rem}
+.st-log li:nth-child(5n+1) .pkg{--pc:var(--mauve)}
+.st-log li:nth-child(5n+2) .pkg{--pc:var(--blue)}
+.st-log li:nth-child(5n+3) .pkg{--pc:var(--green)}
+.st-log li:nth-child(5n+4) .pkg{--pc:var(--peach)}
+.st-log li:nth-child(5n+5) .pkg{--pc:var(--pink)}
+.skill-term .st-foot{
+  display:flex;align-items:center;padding:8px 18px 14px;color:var(--subtext0);
+}
+.skill-term .st-foot .chev{color:var(--mauve);margin-right:8px}
+.skill-term .st-foot .bar{
+  flex:1;height:6px;margin:0 12px;border-radius:6px;overflow:hidden;
+  background:var(--surface0);
+}
+.skill-term .st-foot .bar i{
+  display:block;height:100%;border-radius:6px;
+  background:linear-gradient(90deg,var(--mauve),var(--blue),var(--teal));
+  animation:installBar 6s cubic-bezier(.3,.1,.3,1) infinite;
+}
+@keyframes installBar{
+  0%{width:4%}
+  55%{width:82%}
+  78%{width:91%}
+  100%{width:100%}
+}
+.skill-term .st-foot .pct{font-size:.7rem;color:var(--green)}
+@media(max-width:640px){
+  .skills-strip{padding:26px 14px}
+  .skill-term{font-size:.68rem}
+  .st-log{height:112px}
 }
 
 /* ---------- projects ---------- */
@@ -467,17 +587,17 @@ section{max-width:var(--maxw);margin:0 auto;padding:90px 24px}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent,var(--mauve));transform:scaleX(0);transform-origin:left;transition:transform .45s cubic-bezier(.2,.8,.2,1);z-index:1}
 .card::after{
   content:'';position:absolute;top:0;bottom:0;left:-80%;width:50%;
-  background:linear-gradient(105deg,transparent,rgba(205,214,244,.06) 40%,rgba(203,166,247,.10) 50%,rgba(205,214,244,.06) 60%,transparent);
+  background:linear-gradient(105deg,transparent,rgba(var(--text-rgb),.06) 40%,rgba(var(--mauve-rgb),.10) 50%,rgba(var(--text-rgb),.06) 60%,transparent);
   transform:skewX(-18deg);
   transition:left .7s cubic-bezier(.2,.8,.2,1);
   pointer-events:none;
 }
 .card:hover::after{left:130%}
-.card:hover{translate:0 -7px;border-color:var(--surface1);box-shadow:0 24px 50px -20px rgba(17,17,27,.9);background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%), rgba(203,166,247,.10), transparent 65%),var(--mantle)}
+.card:hover{translate:0 -7px;border-color:var(--surface1);box-shadow:0 24px 50px -20px rgba(var(--shadow-rgb),.9);background:radial-gradient(240px circle at var(--mx,50%) var(--my,50%), rgba(var(--mauve-rgb),.10), transparent 65%),var(--mantle)}
 .card:hover::before{transform:scaleX(1)}
 .card .ptag{font-family:var(--mono);font-size:.68rem;color:var(--accent,var(--mauve));border:1px solid color-mix(in srgb,var(--accent,var(--mauve)) 40%,transparent);padding:3px 10px;border-radius:99px;display:inline-block;margin-bottom:16px}
 .card h3{font-family:var(--display);font-size:1.28rem;font-weight:700;margin-bottom:10px}
-.card p{color:var(--subtext);font-size:.95rem}
+.card p{color:var(--subtext);font-size:.95rem;overflow-wrap:anywhere}
 .card .tech{margin-top:20px;display:flex;flex-wrap:wrap;gap:8px}
 .card .tech span{font-family:var(--mono);font-size:.68rem;background:var(--surface0);color:var(--subtext);padding:4px 10px;border-radius:6px;transition:background .25s,color .25s,transform .25s cubic-bezier(.34,1.6,.4,1)}
 .card:hover .tech span{color:var(--text)}
@@ -488,25 +608,61 @@ section{max-width:var(--maxw);margin:0 auto;padding:90px 24px}
 .c-loop{--accent:var(--blue)}
 .c-emenu{--accent:var(--yellow)}
 .c-pos{--accent:var(--pink)}
+.c-portal{--accent:var(--lavender)}
+.c-bio{--accent:var(--red)}
+.c-tele{--accent:var(--teal)}
+.c-studio{--accent:var(--pink)}
 
-/* terminal chrome for project cards */
-.card-bar{
-  display:flex;align-items:center;gap:7px;padding:11px 16px;
-  background:var(--crust);border-bottom:1px solid var(--surface0);
-  font-family:var(--mono);
+/* parallax cover for project cards */
+.card-cover{
+  position:relative;height:150px;overflow:hidden;
+  border-bottom:1px solid var(--surface0);
+  background:
+    radial-gradient(130% 130% at 82% -10%, color-mix(in srgb, var(--accent,var(--mauve)) 30%, transparent), transparent 62%),
+    radial-gradient(90% 90% at 10% 110%, color-mix(in srgb, var(--accent,var(--mauve)) 14%, transparent), transparent 60%),
+    linear-gradient(165deg, color-mix(in srgb, var(--accent,var(--mauve)) 10%, var(--crust)), var(--crust));
 }
-.card-bar .dot{width:10px;height:10px}
-.card-bar .win-title{margin-left:auto;margin-right:auto;font-size:.66rem;color:var(--overlay)}
+/* floating layers — each moves at its own depth via --px/--py set by JS */
+.cshape{position:absolute;pointer-events:none;translate:calc(var(--px,0)*var(--d,10px)) calc(var(--py,0)*var(--d,10px));transition:translate .25s ease-out}
+.cs1{
+  width:120px;height:120px;border-radius:50%;top:-34px;right:8%;--d:22px;
+  background:radial-gradient(circle at 35% 35%, color-mix(in srgb,var(--accent,var(--mauve)) 55%, transparent), color-mix(in srgb,var(--accent,var(--mauve)) 12%, transparent) 70%);
+  filter:blur(1px);
+}
+.cs2{
+  width:64px;height:64px;border-radius:50%;bottom:16px;right:30%;--d:-14px;
+  border:2px solid color-mix(in srgb,var(--accent,var(--mauve)) 60%, transparent);
+}
+.cs3{
+  width:14px;height:14px;border-radius:50%;top:30px;left:38%;--d:30px;
+  background:var(--accent,var(--mauve));
+  box-shadow:0 0 16px 3px color-mix(in srgb,var(--accent,var(--mauve)) 55%, transparent);
+}
+.cs4{
+  width:150px;height:2px;bottom:34px;left:-20px;--d:-20px;rotate:-24deg;
+  background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--accent,var(--mauve)) 50%, transparent),transparent);
+}
+.cnum{
+  position:absolute;left:20px;bottom:2px;--d:-8px;
+  translate:calc(var(--px,0)*var(--d)) calc(var(--py,0)*var(--d));
+  transition:translate .25s ease-out;
+  font-family:var(--display);font-weight:800;font-size:3.4rem;line-height:1;
+  color:transparent;-webkit-text-stroke:1.5px color-mix(in srgb,var(--accent,var(--mauve)) 65%, transparent);
+}
+.cpath{
+  position:absolute;top:12px;left:20px;
+  font-family:var(--mono);font-size:.68rem;color:var(--subtext0);
+}
+.cpath::before{content:'\276f ';color:var(--accent,var(--mauve))}
+.card:hover .cnum{-webkit-text-stroke-color:var(--accent,var(--mauve))}
 .card-body{padding:22px 28px 28px;transform-style:preserve-3d}
-.cmdrow{font-family:var(--mono);font-size:.74rem;color:var(--subtext0);margin-bottom:12px}
-.cmdrow .chev{color:var(--mauve);margin:0 6px 0 0}
-.cmdrow .c-name{color:var(--green)}
-.card-3d .card-bar{transform:translateZ(12px)}
-.card-3d .cmdrow{transform:translateZ(18px)}
+/* 3D depth layers inside the tilting card */
+.card-3d .card-cover{transform:translateZ(6px)}
+.card-3d .cnum{transform:translateZ(34px)}
 
-/* ---------- about ---------- */
+/* ---------- about ---------- *//* ---------- about ---------- */
 .about-grid{display:grid;grid-template-columns:auto 1.2fr .8fr;gap:50px;align-items:start}
-@media(max-width:1000px){.about-grid{grid-template-columns:auto 1fr}.stat-stack{grid-column:1/-1;grid-template-columns:repeat(3,1fr)}}
+@media(max-width:1000px){.about-grid{grid-template-columns:auto 1fr}.stat-stack{grid-column:1/-1;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}}
 @media(max-width:640px){.about-grid{grid-template-columns:1fr;justify-items:center}.stat-stack{grid-template-columns:1fr;width:100%}}
 
 .photo-frame{position:relative;width:250px}
@@ -517,20 +673,20 @@ section{max-width:var(--maxw);margin:0 auto;padding:90px 24px}
   width:250px;aspect-ratio:1;border-radius:50%;padding:6px;
   background:conic-gradient(from var(--ring),var(--mauve),var(--blue),var(--teal),var(--green),var(--pink),var(--mauve));
   animation:spinRing 6s linear infinite, floaty 6s ease-in-out infinite;
-  box-shadow:0 22px 55px -18px rgba(203,166,247,.45);
+  box-shadow:0 22px 55px -18px rgba(var(--mauve-rgb),.45);
 }
 @keyframes spinRing{to{--ring:360deg}}
 .avatar-inner{
   width:100%;height:100%;border-radius:50%;overflow:hidden;
   background:
-    radial-gradient(circle at 50% 20%, rgba(203,166,247,.35), transparent 65%),
-    radial-gradient(circle at 50% 100%, rgba(137,180,250,.3), transparent 70%),
+    radial-gradient(circle at 50% 20%, rgba(var(--mauve-rgb),.35), transparent 65%),
+    radial-gradient(circle at 50% 100%, rgba(var(--blue-rgb),.3), transparent 70%),
     var(--crust);
   display:flex;align-items:flex-end;justify-content:center;
 }
 .avatar-inner img{
   width:100%;height:100%;object-fit:cover;object-position:center 12%;
-  filter:drop-shadow(0 10px 18px rgba(17,17,27,.5));
+  filter:drop-shadow(0 10px 18px rgba(var(--shadow-rgb),.5));
   transition:transform .5s cubic-bezier(.2,.8,.2,1);
 }
 .photo-frame:hover .avatar-inner img{transform:scale(1.06)}
@@ -539,7 +695,7 @@ section{max-width:var(--maxw);margin:0 auto;padding:90px 24px}
   font-family:var(--mono);font-size:.7rem;white-space:nowrap;
   background:var(--crust);border:1px solid var(--surface1);
   color:var(--green);padding:6px 14px;border-radius:99px;
-  box-shadow:0 8px 20px rgba(17,17,27,.6);z-index:2;
+  box-shadow:0 8px 20px rgba(var(--shadow-rgb),.6);z-index:2;
   animation:floaty 6s ease-in-out infinite;
 }
 .photo-frame .badge::before{content:'❯ ';color:var(--mauve)}
@@ -550,7 +706,7 @@ section{max-width:var(--maxw);margin:0 auto;padding:90px 24px}
 }
 .photo-frame .orbit::before{
   content:'';position:absolute;top:50%;left:-5px;width:10px;height:10px;border-radius:50%;
-  background:var(--teal);box-shadow:0 0 12px 2px rgba(148,226,213,.7);
+  background:var(--teal);box-shadow:0 0 12px 2px rgba(var(--teal-rgb),.7);
 }
 @keyframes orbitSpin{to{transform:rotate(360deg)}}
 .about-grid p{color:var(--subtext);margin-bottom:18px}
@@ -562,6 +718,30 @@ section{max-width:var(--maxw);margin:0 auto;padding:90px 24px}
 .stat:nth-child(2) b{color:var(--blue)}
 .stat:nth-child(3) b{color:var(--green)}
 .stat small{font-family:var(--mono);font-size:.74rem;color:var(--subtext0)}
+
+/* ---------- experience timeline ---------- */
+.timeline{position:relative;max-width:780px;margin:0 auto;padding-left:34px}
+.timeline::before{
+  content:'';position:absolute;left:8px;top:6px;bottom:6px;width:2px;
+  background:linear-gradient(180deg,var(--mauve),var(--blue),var(--teal),var(--green));
+  border-radius:2px;
+}
+.tl-item{position:relative;padding:0 0 42px 24px}
+.tl-item:last-child{padding-bottom:0}
+.tl-item::before{
+  content:'';position:absolute;left:-33px;top:6px;width:16px;height:16px;border-radius:50%;
+  background:var(--base);border:3px solid var(--tl,var(--mauve));
+  animation:tlPulse 2.6s infinite;
+}
+@keyframes tlPulse{0%{box-shadow:0 0 0 0 rgba(var(--tlrgb,var(--mauve-rgb)),.45)}70%{box-shadow:0 0 0 10px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.tl-item .year{font-family:var(--mono);font-size:.72rem;font-weight:700;color:var(--crust);background:var(--tl,var(--mauve));padding:2px 12px;border-radius:99px;display:inline-block;margin-bottom:10px}
+.tl-item h3{font-family:var(--display);font-size:1.15rem;font-weight:700;margin-bottom:4px}
+.tl-item .org{font-family:var(--mono);font-size:.74rem;color:var(--subtext0);margin-bottom:8px}
+.tl-item p{color:var(--subtext);font-size:.95rem;max-width:62ch}
+.tl-1{--tl:var(--mauve);--tlrgb:var(--mauve-rgb)}
+.tl-2{--tl:var(--blue);--tlrgb:var(--blue-rgb)}
+.tl-3{--tl:var(--teal);--tlrgb:var(--teal-rgb)}
+@media(max-width:700px){.tl-item p{max-width:none}.timeline{text-align:left}}
 
 /* ---------- big outline band ---------- */
 .bigband{overflow:hidden;padding:30px 0 10px;user-select:none}
@@ -605,17 +785,137 @@ footer .heart{color:var(--red)}
     display:block;position:fixed;top:0;left:0;z-index:999;pointer-events:none;
     border-radius:50%;will-change:transform;
   }
-  .cursor-dot{width:8px;height:8px;background:var(--mauve);margin:-4px 0 0 -4px;box-shadow:0 0 10px 2px rgba(203,166,247,.5)}
+  .cursor-dot{width:8px;height:8px;background:var(--mauve);margin:-4px 0 0 -4px;box-shadow:0 0 10px 2px rgba(var(--mauve-rgb),.5)}
   .cursor-ring{
     width:38px;height:38px;margin:-19px 0 0 -19px;
-    border:1.5px solid rgba(203,166,247,.55);
+    border:1.5px solid rgba(var(--mauve-rgb),.55);
     transition:width .25s,height .25s,margin .25s,border-color .25s,background .25s;
   }
   .cursor-ring.on{
     width:58px;height:58px;margin:-29px 0 0 -29px;
-    border-color:var(--teal);background:rgba(148,226,213,.08);
+    border-color:var(--teal);background:rgba(var(--teal-rgb),.08);
   }
 }
+
+
+/* ---------- mobile centering ---------- */
+@media(max-width:760px){
+  .hero{justify-items:center;text-align:center;width:100%}
+  .hero-left{width:100%}
+  .cta-row,.hero-meta{justify-content:center}
+  .tilt-wrap{width:100%;max-width:520px;margin:0 auto}
+  .terminal{width:100%;text-align:left}
+  .sec-head{justify-content:center}
+  .sec-head .rule{display:none}
+  .grid{justify-items:center;width:100%}
+  .card{width:100%}
+  .card-body{text-align:center}
+  .card .tech{justify-content:center}
+  .about-grid{text-align:center}
+  .stat{justify-content:center}
+  .contact p{padding:0 6px}
+}
+
+
+/* ---------- catppuccin pet ---------- */
+.pet{
+  position:fixed;top:0;left:0;z-index:-1;
+  width:66px;height:52px;pointer-events:none;
+  will-change:transform;
+}
+.pet svg{width:100%;height:100%;overflow:visible}
+.pet.flip svg{transform:scaleX(-1)}
+.pet .body{fill:var(--mauve)}
+.pet .belly{fill:color-mix(in srgb, var(--mauve) 60%, var(--base))}
+.pet .head{fill:var(--mauve)}
+.pet .ear{fill:var(--mauve)}
+.pet .ear-in{fill:var(--pink)}
+.pet .tail{stroke:var(--mauve);stroke-width:5;stroke-linecap:round;fill:none}
+.pet .leg{fill:color-mix(in srgb, var(--mauve) 80%, var(--crust))}
+.pet .eye{fill:var(--crust)}
+.pet .nose{fill:var(--pink)}
+.pet .stripe{fill:color-mix(in srgb, var(--crust) 45%, var(--mauve))}
+
+/* tail: slow sway idle, quick wag while walking */
+.pet .tail-g{transform-origin:14px 30px;animation:tailSway 3.2s ease-in-out infinite}
+@keyframes tailSway{0%,100%{transform:rotate(0deg)}50%{transform:rotate(14deg)}}
+.pet.walk .tail-g{animation:tailSway .55s ease-in-out infinite}
+
+/* blinking */
+.pet .eye{transform-origin:center;animation:petBlink 4.4s infinite}
+@keyframes petBlink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+
+/* legs: trot while walking */
+.pet .leg{transform-origin:top center}
+.pet.walk .leg.a{animation:trot .32s ease-in-out infinite}
+.pet.walk .leg.b{animation:trot .32s ease-in-out infinite reverse}
+@keyframes trot{0%,100%{transform:rotate(16deg)}50%{transform:rotate(-16deg)}}
+/* body bob while walking */
+.pet.walk .torso{animation:bob .32s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-1.6px)}}
+
+/* play: happy pounce hops */
+.pet.play svg{animation:pounce 1.2s cubic-bezier(.3,0,.4,1)}
+@keyframes pounce{
+  0%,100%{transform:translateY(0) scale(1,1)}
+  12%{transform:translateY(0) scale(1.12,.85)}
+  30%{transform:translateY(-13px) scale(.94,1.08) rotate(-5deg)}
+  48%{transform:translateY(0) scale(1.1,.88)}
+  62%{transform:translateY(-9px) scale(.96,1.05) rotate(4deg)}
+  80%{transform:translateY(0) scale(1.06,.92)}
+}
+.pet.flip.play svg{animation:pounceF 1.2s cubic-bezier(.3,0,.4,1)}
+@keyframes pounceF{
+  0%,100%{transform:scaleX(-1) translateY(0)}
+  12%{transform:scaleX(-1.12) translateY(0) scaleY(.85)}
+  30%{transform:scaleX(-.94) translateY(-13px) scaleY(1.08) rotate(5deg)}
+  48%{transform:scaleX(-1.1) translateY(0) scaleY(.88)}
+  62%{transform:scaleX(-.96) translateY(-9px) scaleY(1.05) rotate(-4deg)}
+  80%{transform:scaleX(-1.06) translateY(0) scaleY(.92)}
+}
+
+/* sleeping: closed eyes + floating z z z */
+.pet.sleep .eye{animation:none;transform:scaleY(.12)}
+.pet.sleep .tail-g{animation:tailSway 6s ease-in-out infinite}
+.pet .zzz{
+  position:absolute;left:44px;top:-16px;
+  font-family:var(--mono);font-weight:700;color:var(--lavender);
+  opacity:0;pointer-events:none;font-size:.8rem;
+}
+.pet .zzz span{font-size:.65rem;position:absolute;left:9px;top:-8px}
+.pet .zzz i{font-style:normal;font-size:.5rem;position:absolute;left:17px;top:-15px}
+.pet.sleep .zzz{animation:zzzFloat 2.6s ease-in-out infinite}
+@keyframes zzzFloat{
+  0%{opacity:0;transform:translateY(4px)}
+  30%{opacity:.9}
+  100%{opacity:0;transform:translateY(-10px)}
+}
+/* dashing: speed lines + faster gait */
+.pet .lines{position:absolute;left:-6px;top:20px;width:20px;height:18px;opacity:0;transition:opacity .15s}
+.pet.dash .lines{opacity:1}
+.pet.flip .lines{left:auto;right:-6px;transform:scaleX(-1)}
+.pet .lines i{position:absolute;height:2px;border-radius:2px;background:color-mix(in srgb, var(--mauve) 75%, transparent);animation:dashLine .28s linear infinite}
+.pet .lines i:nth-child(1){width:15px;top:0}
+.pet .lines i:nth-child(2){width:10px;top:7px;left:-4px;animation-delay:.09s}
+.pet .lines i:nth-child(3){width:13px;top:14px;left:-2px;animation-delay:.18s}
+@keyframes dashLine{0%{opacity:.95;translate:7px 0;scale:1 1}100%{opacity:0;translate:-13px 0;scale:.4 1}}
+.pet.dash .leg.a,.pet.dash .leg.b{animation-duration:.18s}
+.pet.dash .torso{animation-duration:.18s}
+.pet.dash .tail-g{animation:tailSway .3s ease-in-out infinite}
+
+/* click ripple where you tap */
+.click-fx{
+  position:fixed;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;
+  border:2px solid var(--mauve);pointer-events:none;z-index:998;
+  animation:clickFx .65s ease-out forwards;
+}
+.click-fx::after{
+  content:'';position:absolute;inset:2px;border-radius:50%;
+  background:rgba(var(--mauve-rgb),.3);
+}
+@keyframes clickFx{from{opacity:.95;transform:scale(.4)}to{opacity:0;transform:scale(4)}}
+
+@media(max-width:640px){.pet{width:52px;height:41px}}
 
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms !important;animation-delay:0s !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
@@ -625,6 +925,7 @@ footer .heart{color:var(--red)}
 </style>
 </head>
 <body>
+<script>(function(){try{var t=localStorage.getItem('cat-flavor');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
 
 <div class="scroll-progress" aria-hidden="true"></div>
 
@@ -646,14 +947,53 @@ footer .heart{color:var(--red)}
   <span class="shoot sh1"></span><span class="shoot sh2"></span><span class="shoot sh3"></span>
 </div>
 
+<div class="pet" id="catPet" aria-hidden="true">
+  <span class="lines" aria-hidden="true"><i></i><i></i><i></i></span>
+  <div class="zzz">z<span>z</span><i>z</i></div>
+  <svg viewBox="0 0 66 52">
+    <g class="tail-g"><path class="tail" d="M14 38 Q4 34 7 24"/></g>
+    <g class="torso">
+      <rect class="leg a" x="18" y="36" width="5.5" height="13" rx="2.7"/>
+      <rect class="leg b" x="26" y="36" width="5.5" height="13" rx="2.7"/>
+      <rect class="leg a" x="36" y="36" width="5.5" height="13" rx="2.7"/>
+      <rect class="leg b" x="44" y="36" width="5.5" height="13" rx="2.7"/>
+      <ellipse class="body" cx="32" cy="32" rx="20" ry="13"/>
+      <ellipse class="belly" cx="32" cy="37" rx="12" ry="7"/>
+      <rect class="stripe" x="24" y="20" width="4" height="7" rx="2"/>
+      <rect class="stripe" x="32" y="19" width="4" height="7" rx="2"/>
+      <g class="head-g">
+        <polygon class="ear" points="41,10 45,-1 51,9"/>
+        <polygon class="ear" points="53,9 60,0 62,11"/>
+        <polygon class="ear-in" points="43.5,8.5 45.6,3 49,8"/>
+        <polygon class="ear-in" points="55,8 59,3.4 60.4,9.5"/>
+        <circle class="head" cx="51" cy="19" r="12"/>
+        <ellipse class="eye" cx="46.5" cy="18" rx="1.9" ry="2.6"/>
+        <ellipse class="eye" cx="56" cy="18" rx="1.9" ry="2.6"/>
+        <polygon class="nose" points="50.4,23 52.6,23 51.5,25"/>
+      </g>
+    </g>
+  </svg>
+</div>
+
+
 <nav>
   <div class="nav-inner">
     <div class="logo"><span class="tilde">~</span><span class="slash">/</span>aron<span class="slash">.</span>dev</div>
     <div class="nav-links">
       <a href="#work">work</a>
+      <a href="#experience">exp</a>
       <a href="#about">about</a>
       <a href="#contact">contact</a>
     </div>
+    <div class="themes" role="group" aria-label="Theme">
+      <button class="tswatch" data-flavor="latte" title="Latte" aria-label="Latte theme" style="--sw:#eff1f5;--sd:#8839ef"></button>
+      <button class="tswatch" data-flavor="frappe" title="Frappé" aria-label="Frappé theme" style="--sw:#303446;--sd:#ca9ee6"></button>
+      <button class="tswatch" data-flavor="macchiato" title="Macchiato" aria-label="Macchiato theme" style="--sw:#24273a;--sd:#c6a0f6"></button>
+      <button class="tswatch active" data-flavor="mocha" title="Mocha" aria-label="Mocha theme" style="--sw:#1e1e2e;--sd:#cba6f7"></button>
+    </div>
+    <button class="nav-burger" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </nav>
 
@@ -661,14 +1001,13 @@ footer .heart{color:var(--red)}
   <div class="hero-left">
     <span class="eyebrow">available for projects</span>
     <h1>Aron Joseph.<br><span class="grad">Full-stack, end to end.</span></h1>
-    <p class="hero-sub">I build <strong>Web Applications, PWAs, and Mobile Apps</strong> From database schema to deployed server, I ship the whole thing.</p>
+    <p class="hero-sub">Full-stack developer &amp; UI/UX designer building <strong>web applications, PWAs, and mobile apps</strong> for different clients — from database schema to deployed server, I ship the whole thing.</p>
     <div class="cta-row">
       <a class="btn btn-primary" href="#work">view work <span aria-hidden="true">↓</span></a>
       <a class="btn btn-ghost" href="https://github.com/Arseph">github.com/Arseph</a>
     </div>
     <div class="hero-meta">
-      <span>City of Koronadal, PH</span>
-      <span>Laravel · Vue · React Native</span>
+      <span>Laravel · Vue · React Native · Expo</span>
     </div>
   </div>
 
@@ -684,16 +1023,15 @@ footer .heart{color:var(--red)}
         <span class="line type1 cmd"><span class="c-name">whoami</span> --verbose</span>
       </div>
       <div class="out reveal-out o1"><span class="k">name</span>: <span class="s">"Aron Joseph"</span></div>
-      <div class="out reveal-out o2"><span class="k">role</span>: <span class="s">"Full-Stack Developer"</span></div>
-      <div class="out reveal-out o3"><span class="k">base</span>: <span class="s">"City of Koronadal, Philippines"</span></div>
+      <div class="out reveal-out o2"><span class="k">role</span>: <span class="s">"Full-Stack Dev &amp; UI/UX"</span></div>
       <div class="prompt p2">
         <span class="seg dir"> ~/projects</span><span class="seg git"> main</span><span class="chev">❯</span>
         <span class="line type2 cmd"><span class="c-name">cat</span> stack.yaml | head -4</span>
       </div>
-      <div class="out reveal-out o4"><span class="k">backend</span>:  [<span class="v">Laravel</span>, <span class="v">MySQL</span>, <span class="v">Redis</span>, <span class="v">Nginx</span>]</div>
-      <div class="out reveal-out o5"><span class="k">frontend</span>: [<span class="v">Vue 3</span>, <span class="v">Pinia</span>, <span class="v">Vuetify</span>]</div>
-      <div class="out reveal-out o6"><span class="k">mobile</span>:   [<span class="v">React Native</span>, <span class="v">Expo</span>, <span class="v">Firebase</span>]</div>
-      <div class="out reveal-out o7"><span class="k">also</span>:     [<span class="v">SQL Server</span>, <span class="v">Sanctum</span>, <span class="v">EAS Build</span>]</div>
+      <div class="out reveal-out o4"><span class="k">backend</span>:  [<span class="v">Laravel</span>, <span class="v">PHP</span>, <span class="v">MySQL</span>]</div>
+      <div class="out reveal-out o5"><span class="k">frontend</span>: [<span class="v">Vue 3</span>, <span class="v">Vuetify</span>, <span class="v">TypeScript</span>]</div>
+      <div class="out reveal-out o6"><span class="k">mobile</span>:   [<span class="v">React Native</span>, <span class="v">Expo</span>, <span class="v">PWA</span>]</div>
+      <div class="out reveal-out o7"><span class="k">design</span>:   [<span class="v">Figma</span>, <span class="v">Adobe XD</span>, <span class="v">Canva</span>]</div>
       <div class="prompt p3">
         <span class="seg dir"> ~/projects</span><span class="seg git"> main</span><span class="chev">❯</span>
         <span class="cursor" aria-hidden="true"></span>
@@ -703,20 +1041,46 @@ footer .heart{color:var(--red)}
   </div>
 </header>
 
-<div class="belt-wrap" aria-hidden="true">
-  <div class="belt">
-    <span style="--i:0">Laravel</span>
-    <span style="--i:1">Vue 3</span>
-    <span style="--i:2">React Native</span>
-    <span style="--i:3">Expo</span>
-    <span style="--i:4">MySQL</span>
-    <span style="--i:5">Redis</span>
-    <span style="--i:6">Nginx</span>
-    <span style="--i:7">SQL Server</span>
-    <span style="--i:8">Pinia</span>
-    <span style="--i:9">Vuetify</span>
-    <span style="--i:10">Sanctum</span>
-    <span style="--i:11">Firebase</span>
+<div class="skills-strip" aria-hidden="true">
+  <div class="skill-term">
+    <div class="st-bar">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="st-title">aron@dev: ~ — installing skills</span>
+    </div>
+    <div class="st-cmd"><span class="chev">❯</span><span class="c-name">stack</span> install <span class="flag">--all --with-experience</span></div>
+    <div class="st-log">
+      <ul>
+    <li><span class="ok">✓</span><span class="pkg">laravel</span><span class="ver">@stable</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.42s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">vue</span><span class="ver">@3.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.31s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">react-native</span><span class="ver">@latest</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.87s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">expo</span><span class="ver">@sdk-52</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.64s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">nuxt</span><span class="ver">@3.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.53s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">typescript</span><span class="ver">@5.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.28s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">vuetify</span><span class="ver">@3.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.36s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">mysql</span><span class="ver">@8.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.71s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">php</span><span class="ver">@8.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.24s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">firebase</span><span class="ver">@modular</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.58s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">capacitor</span><span class="ver">@6.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.49s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">csharp</span><span class="ver">@dotnet</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.66s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">ubuntu-server</span><span class="ver">@lts</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">1.02s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">figma-to-code</span><span class="ver">@design</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.19s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">laravel</span><span class="ver">@stable</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.42s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">vue</span><span class="ver">@3.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.31s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">react-native</span><span class="ver">@latest</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.87s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">expo</span><span class="ver">@sdk-52</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.64s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">nuxt</span><span class="ver">@3.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.53s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">typescript</span><span class="ver">@5.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.28s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">vuetify</span><span class="ver">@3.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.36s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">mysql</span><span class="ver">@8.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.71s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">php</span><span class="ver">@8.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.24s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">firebase</span><span class="ver">@modular</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.58s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">capacitor</span><span class="ver">@6.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.49s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">csharp</span><span class="ver">@dotnet</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.66s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">ubuntu-server</span><span class="ver">@lts</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">1.02s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">figma-to-code</span><span class="ver">@design</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.19s</span></li>
+      </ul>
+    </div>
+    <div class="st-foot"><span class="chev">❯</span>resolving<span class="bar"><i></i></span><span class="pct">14/14 ✓</span></div>
   </div>
 </div>
 
@@ -728,65 +1092,117 @@ footer .heart{color:var(--red)}
   </div>
   <div class="grid">
     <article class="card c-emenu reveal-left">
-      <div class="card-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="win-title">aron@dev:~/projects/e-menu — zsh</span></div>
+      <div class="card-cover">
+        <span class="cshape cs1"></span><span class="cshape cs2"></span><span class="cshape cs3"></span>
+        <span class="cshape cs4"></span>
+        <span class="cnum">01</span>
+        <span class="cpath">~/e-menu</span>
+      </div>
       <div class="card-body">
-      <div class="cmdrow"><span class="chev">❯</span><span class="c-name">cat</span> readme.md</div>
       <span class="ptag">E-Menu · Restaurant SaaS</span>
       <h3>E-Menu Ordering Platform</h3>
-      <p>QR-code table ordering for restaurants — diners scan, browse the menu, and order from their phone while staff see orders arrive in real time. Multi-tenant with per-restaurant branding and theme customization.</p>
-      <div class="tech"><span>Laravel</span><span>Vue 3</span><span>Redis</span><span>AWS EC2</span><span>Cloudflare</span></div>
-          </div>
+      <p>QR-code table ordering for restaurants — diners scan, browse the menu, and order from their phone while staff see orders arrive in real time. Multi-tenant with per-restaurant branding, deployed on AWS EC2.</p>
+      <div class="tech"><span>Laravel</span><span>Vue 3</span><span>Redis</span></div>
+      </div>
     </article>
-    <article class="card c-hris reveal-right">
-      <div class="card-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="win-title">aron@dev:~/projects/hris — zsh</span></div>
+    <article class="card c-portal reveal-right">
+      <div class="card-cover">
+        <span class="cshape cs1"></span><span class="cshape cs2"></span><span class="cshape cs3"></span>
+        <span class="cshape cs4"></span>
+        <span class="cnum">02</span>
+        <span class="cpath">~/employee-portal</span>
+      </div>
       <div class="card-body">
-      <div class="cmdrow"><span class="chev">❯</span><span class="c-name">cat</span> readme.md</div>
-      <span class="ptag">HRIS</span>
-      <h3>Human Resources Information System</h3>
-      <p>A complete human resources platform: role-based access control, payroll processing, biometric attendance with ZKTeco devices, loyalty award tracking, and audit logging — built for offices.</p>
-      <div class="tech"><span>Laravel</span><span>Vue 3</span><span>MySQL</span><span>Redis</span><span>ZKTeco</span></div>
-          </div>
+      <span class="ptag">PWA</span>
+      <h3>Employee Portal</h3>
+      <p>A Progressive Web App where employees manage their profiles, track attendance, and access HR services.</p>
+      <div class="tech"><span>Vue 3</span><span>Laravel</span><span>PWA</span></div>
+      </div>
     </article>
-    <article class="card c-pos reveal-left">
-      <div class="card-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="win-title">aron@dev:~/projects/pos — zsh</span></div>
+    <article class="card c-doh reveal-left">
+      <div class="card-cover">
+        <span class="cshape cs1"></span><span class="cshape cs2"></span><span class="cshape cs3"></span>
+        <span class="cshape cs4"></span>
+        <span class="cnum">03</span>
+        <span class="cpath">~/job-portal</span>
+      </div>
       <div class="card-body">
-      <div class="cmdrow"><span class="chev">❯</span><span class="c-name">cat</span> readme.md</div>
-      <span class="ptag">POS · Retail</span>
-      <h3>Point of Sale System</h3>
-      <p>A sales and inventory platform for day-to-day store operations — fast checkout, stock tracking with low-inventory alerts, receipt printing, and daily sales reports that give owners a clear picture of the business.</p>
-      <div class="tech"><span>Laravel</span><span>Vue 3</span><span>MySQL</span><span>Redis</span></div>
-          </div>
+      <span class="ptag">Recruitment</span>
+      <h3>Employee Management System</h3>
+      <p>A recruitment platform where employers post openings and applicants apply, track their applications, and manage resumes online — hardened through systematic security remediation.</p>
+      <div class="tech"><span>Laravel</span><span>Vue 3</span><span>Nginx</span><span>Security</span></div>
+      </div>
     </article>
-    <article class="card c-doh reveal-right">
-      <div class="card-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="win-title">aron@dev:~/projects/job-portal — zsh</span></div>
+    <article class="card c-tsa reveal-right">
+      <div class="card-cover">
+        <span class="cshape cs1"></span><span class="cshape cs2"></span><span class="cshape cs3"></span>
+        <span class="cshape cs4"></span>
+        <span class="cnum">04</span>
+        <span class="cpath">~/tsa-hris</span>
+      </div>
       <div class="card-body">
-      <div class="cmdrow"><span class="chev">❯</span><span class="c-name">cat</span> readme.md</div>
-      <span class="ptag">Job Portal</span>
-      <h3>Applicant Management System</h3>
-      <p>A job application and recruitment portal hardened through systematic security remediation.</p>
-      <div class="tech"><span>Laravel</span><span>Nginx</span><span>Security</span><span>ZAP</span></div>
-          </div>
+      <span class="ptag">Payroll · Security Agency</span>
+      <h3>TSA HRIS &amp; Payroll</h3>
+      <p>HRIS and payroll platform for Security Agency — guard deployment records, deductions and loans, and a 22-column payroll register PDF matched precisely to their existing Excel workflow.</p>
+      <div class="tech"><span>Laravel</span><span>Vue 3</span><span>DOMPDF</span><span>MySQL</span></div>
+      </div>
     </article>
-    <article class="card c-tsa reveal-left">
-      <div class="card-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="win-title">aron@dev:~/projects/payroll — zsh</span></div>
+    <article class="card c-studio reveal-left">
+      <div class="card-cover">
+        <span class="cshape cs1"></span><span class="cshape cs2"></span><span class="cshape cs3"></span>
+        <span class="cshape cs4"></span>
+        <span class="cnum">05</span>
+        <span class="cpath">~/client-work</span>
+      </div>
       <div class="card-body">
-      <div class="cmdrow"><span class="chev">❯</span><span class="c-name">cat</span> readme.md</div>
-      <span class="ptag">Payroll · Enterprise</span>
-      <h3>Payroll</h3>
-      <p>Payroll system including a 22-column payroll register PDF matched precisely to the company's existing Excel workflow — deductions, loans, and all.</p>
-      <div class="tech"><span>Laravel</span><span>Blade PDF</span><span>Vue 3</span><span>MySQL</span></div>
-          </div>
+      <span class="ptag">Agency</span>
+      <h3>Client Projects</h3>
+      <p>Full-stack and UI/UX work for local and international clients.</p>
+      <div class="tech"><span>Laravel</span><span>Vue.js</span><span>Bootstrap</span><span>Figma</span><span>Adobe XD</span></div>
+      </div>
     </article>
     <article class="card c-loop reveal-right">
-      <div class="card-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="win-title">aron@dev:~/projects/local-loop — zsh</span></div>
+      <div class="card-cover">
+        <span class="cshape cs1"></span><span class="cshape cs2"></span><span class="cshape cs3"></span>
+        <span class="cshape cs4"></span>
+        <span class="cnum">06</span>
+        <span class="cpath">~/local-loop</span>
+      </div>
       <div class="card-body">
-      <div class="cmdrow"><span class="chev">❯</span><span class="c-name">cat</span> readme.md</div>
       <span class="ptag">Mobile · Community</span>
       <h3>Local Loop</h3>
       <p>A local services mobile app with real-time chat on Firebase, push notifications, provider ID verification, and offline-capable flows — shipped through EAS builds.</p>
       <div class="tech"><span>React Native</span><span>Expo</span><span>Firebase</span><span>Sanctum API</span></div>
-          </div>
+      </div>
     </article>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="sec-head reveal">
+    <span class="seg dir"> ~</span><span class="seg name">/experience</span>
+    <h2>Work experience</h2>
+    <div class="rule"></div>
+  </div>
+  <div class="timeline">
+    <div class="tl-item tl-1 reveal-left">
+      <span class="year">Jul 2024 — Present</span>
+      <h3>Information System Researcher II</h3>
+      <div class="org">ICT Unit</div>
+      <p>Building and maintaining an Employee Portal (a PWA shipped to Android via Capacitor) and a Biometric Daily Time Record system with facial recognition and fingerprint hardware integration — full-stack on Vue.js and Laravel, with a focus on data accuracy and the security of employee records.</p>
+    </div>
+    <div class="tl-item tl-2 reveal-left">
+      <span class="year">Nov 2021 — Jun 2024</span>
+      <h3>Computer Programmer I</h3>
+      <div class="org">ICT Unit</div>
+      <p>Designed and developed a Telemedicine platform, HRMIS, and Job Portal on Laravel and Vue.js, and provided technical assistance for Electronic Medical Record systems across healthcare facilities.</p>
+    </div>
+    <div class="tl-item tl-3 reveal-left">
+      <span class="year">Sep 2019 — May 2021</span>
+      <h3>UI/UX Designer &amp; Full-Stack Web Developer</h3>
+      <div class="org">Private Company</div>
+      <p>Delivered client work spanning full-stack builds</p>
+    </div>
   </div>
 </section>
 
@@ -807,25 +1223,25 @@ footer .heart{color:var(--red)}
       <span class="badge">aron.joseph</span>
     </div>
     <div class="reveal">
-      <p>I'm a developer who likes owning the <strong>entire stack</strong> — schema design, API architecture, frontend state, server configuration, and the deployment pipeline in between. Most of my work lives where reliability matters: HR systems, payroll engines.</p>
-      <p>Lately that means <strong>Laravel APIs with Sanctum auth</strong>, Vue 3 dashboards, and React Native apps talking to the same backend. I run my own Ubuntu dev server, tune Nginx by hand, and care about the details — from database indexes to the exact spacing on a payroll PDF.</p>
+      <p>I'm a full-stack developer building the systems organizations run on — <strong>employee portals, biometric timekeeping, HRIS, and other platforms</strong> — currently working in the IT industry.</p>
+      <p>I like owning the <strong>entire stack</strong>: schema design, Laravel APIs, Vue 3 and Nuxt frontends, React Native apps built and shipped with Expo, PWAs packaged for Android with Capacitor, and the Ubuntu servers underneath. I started as a UI/UX designer, so the Figma-to-production pipeline is all one motion for me — and it shows in the details, from database indexes to the exact spacing on a payroll PDF.</p>
     </div>
     <div class="stat-stack">
       <div class="stat reveal-scale"><b><span class="num" style="--t:7">7</span></b><small>years in programming industry</small></div>
       <div class="stat reveal-scale"><b><span class="num" style="--t:10">10</span>+</b><small>websites &amp; systems implemented</small></div>
-      <div class="stat reveal-scale"><b><span class="num" style="--t:3">3</span></b><small>platforms — PWA, mobile, System</small></div>
+      <div class="stat reveal-scale"><b><span class="num" style="--t:3">3</span></b><small>platforms — web, PWA, mobile</small></div>
     </div>
   </div>
 </section>
 
 <div class="bigband" aria-hidden="true">
   <div class="row row1">
-    <span>HRIS</span><span class="fill">PAYROLL</span><span>POS</span><span class="fill">E-MENU</span><span>MOBILE APPS</span><span class="fill">WEB SYSTEMS</span>
-    <span>HRIS</span><span class="fill">PAYROLL</span><span>POS</span><span class="fill">E-MENU</span><span>MOBILE APPS</span><span class="fill">WEB SYSTEMS</span>
+    <span>HRIS</span><span class="fill">PAYROLL</span><span class="fill">E-MENU</span><span>BIOMETRICS</span><span class="fill">PWA</span>
+    <span>HRIS</span><span class="fill">PAYROLL</span><span class="fill">E-MENU</span><span>BIOMETRICS</span><span class="fill">PWA</span>
   </div>
   <div class="row row2">
-    <span class="fill">LARAVEL</span><span>VUE 3</span><span class="fill">REACT NATIVE</span><span>MYSQL</span><span class="fill">REDIS</span><span>NGINX</span>
-    <span class="fill">LARAVEL</span><span>VUE 3</span><span class="fill">REACT NATIVE</span><span>MYSQL</span><span class="fill">REDIS</span><span>NGINX</span>
+    <span class="fill">LARAVEL</span><span>VUE 3</span><span class="fill">REACT NATIVE</span><span>EXPO</span>
+    <span class="fill">LARAVEL</span><span>VUE 3</span><span class="fill">REACT NATIVE</span><span>EXPO</span>
   </div>
 </div>
 
@@ -833,7 +1249,7 @@ footer .heart{color:var(--red)}
   <div class="reveal">
     <p class="cmdline">❯ <span class="c-name">git</span> commit -m "let's build something"</p>
     <h2><span class="wclip"><span class="w">Have</span></span> <span class="wclip"><span class="w">a</span></span> <span class="wclip"><span class="w">project</span></span> <span class="wclip"><span class="w">in</span></span> <span class="wclip"><span class="w">mind?</span></span></h2>
-    <p>I'm open to freelance and contract work — especially HRIS, payroll, Point of sales, systems, and mobile apps that need a solid backend behind them.</p>
+    <p>I'm open to freelance and contract opportunities involving a wide range of system platforms. I specialize in developing secure, efficient, and user-friendly solutions that streamline business processes and support organizational growth.</p>
     <div class="contact-links">
       <a class="btn btn-primary" href="mailto:aronjosephbra@gmail.com">aronjosephbra@gmail.com</a>
       <a class="btn btn-ghost" href="https://github.com/Arseph">GitHub / Arseph</a>
@@ -873,7 +1289,15 @@ footer .heart{color:var(--red)}
     size();
     addEventListener('resize', size, {passive:true});
 
-    var COLORS = ['203,166,247','137,180,250','148,226,213','166,227,161','180,190,254'];
+    var COLORS = [], LINE = '108,112,134';
+    function loadColors(){
+      var cs = getComputedStyle(document.documentElement);
+      COLORS = ['--mauve-rgb','--blue-rgb','--teal-rgb','--green-rgb','--lavender-rgb']
+        .map(function(v){ return cs.getPropertyValue(v).trim() || '203,166,247'; });
+      LINE = cs.getPropertyValue('--overlay-rgb').trim() || LINE;
+    }
+    loadColors();
+    document.addEventListener('themechange', loadColors);
     var N = Math.min(110, Math.floor(innerWidth / 12));
     var R = 520;                       // cloud radius
     var FOV = 640;                     // perspective strength
@@ -883,7 +1307,7 @@ footer .heart{color:var(--red)}
         x:(Math.random()*2-1)*R,
         y:(Math.random()*2-1)*R*0.62,
         z:(Math.random()*2-1)*R,
-        c:COLORS[(Math.random()*COLORS.length)|0],
+        c:(Math.random()*5)|0,
         s:Math.random()*1.6+0.8
       });
     }
@@ -906,7 +1330,7 @@ footer .heart{color:var(--red)}
         var x1 = p.x*cy - p.z*sy, z1 = p.x*sy + p.z*cy;   // rotate Y
         var y1 = p.y*cx - z1*sx,  z2 = p.y*sx + z1*cx;    // rotate X
         var f = FOV / (FOV + z2 + R);                     // keep in front
-        proj.push({x:CX + x1*f, y:CY + y1*f, f:f, c:p.c, s:p.s});
+        proj.push({x:CX + x1*f, y:CY + y1*f, f:f, c:COLORS[p.c], s:p.s});
       }
       // constellation lines between near points
       for (i = 0; i < N; i++){
@@ -914,7 +1338,7 @@ footer .heart{color:var(--red)}
           var a = proj[i], b = proj[j];
           var dx = a.x-b.x, dy = a.y-b.y, d2 = dx*dx + dy*dy;
           if (d2 < 12000){
-            ctx.strokeStyle = 'rgba(108,112,134,' + (0.20 * (1 - d2/12000) * a.f) + ')';
+            ctx.strokeStyle = 'rgba(' + LINE + ',' + (0.20 * (1 - d2/12000) * a.f) + ')';
             ctx.lineWidth = 1;
             ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
           }
@@ -932,6 +1356,154 @@ footer .heart{color:var(--red)}
     }
     requestAnimationFrame(frame);
   })();
+
+
+  /* ---- catppuccin pet: roams the background, chases the mouse,
+          darts to new spots while scrolling, plays & naps when idle ---- */
+  if (!reduced) (function(){
+    var pet = document.getElementById('catPet');
+    if (!pet) return;
+    var PW = 66, PH = 52;
+    var x = innerWidth * 0.5, y = innerHeight * 0.7;
+    var tx = x, ty = y;
+    var pmx = -1, pmy = -1, lastMouseT = 0, lastScrollT = 0, lastActive = performance.now();
+    var roamUntil = 0, playUntil = 0, nextPlay = performance.now() + 5000;
+
+    function clampT(){
+      tx = Math.max(4, Math.min(innerWidth  - PW - 4, tx));
+      ty = Math.max(4, Math.min(innerHeight - PH - 4, ty));
+    }
+    function randSpot(){
+      tx = 20 + Math.random() * (innerWidth  - PW - 40);
+      ty = 20 + Math.random() * (innerHeight - PH - 40);
+      clampT();
+    }
+
+    addEventListener('mousemove', function(e){
+      pmx = e.clientX; pmy = e.clientY;
+      lastMouseT = lastActive = performance.now();
+    }, {passive:true});
+
+    // touch: dragging a finger lets the cat chase it, like the mouse
+    addEventListener('touchmove', function(e){
+      if (e.touches && e.touches[0]){
+        pmx = e.touches[0].clientX; pmy = e.touches[0].clientY;
+        lastMouseT = lastActive = performance.now();
+      }
+    }, {passive:true});
+
+    addEventListener('scroll', function(){
+      var now = performance.now();
+      lastActive = now;
+      // each scroll burst sends the cat darting to a new spot
+      if (now - lastScrollT > 350) randSpot();
+      lastScrollT = now;
+      roamUntil = now + 900;
+    }, {passive:true});
+
+    addEventListener('resize', clampT, {passive:true});
+
+    // click: ripple at the point, cat dashes there and pounces on arrival
+    var dashUntil = 0, clickChase = false;
+    addEventListener('click', function(e){
+      var now = performance.now();
+      tx = e.clientX - PW * 0.5;
+      ty = e.clientY - PH * 0.6;
+      clampT();
+      roamUntil = now + 1600;   // ignore the cursor until it gets there
+      dashUntil = now + 1600;
+      clickChase = true;
+      lastActive = now;
+      var fx = document.createElement('span');
+      fx.className = 'click-fx';
+      fx.style.left = e.clientX + 'px';
+      fx.style.top = e.clientY + 'px';
+      document.body.appendChild(fx);
+      setTimeout(function(){ fx.remove(); }, 700);
+    }, {passive:true});
+
+    function petLoop(now){
+      // target: random roam spot while scrolling, otherwise chase the cursor
+      if (now > roamUntil && pmx >= 0 && now - lastMouseT < 6000){
+        tx = pmx - PW * 0.5;
+        ty = pmy + 16;              // sits just below the cursor
+        clampT();
+      }
+
+      var dx = tx - x, dy = ty - y;
+      var dist = Math.hypot(dx, dy);
+      var speed = now < dashUntil ? 0.16 : (now < roamUntil ? 0.10 : 0.055);
+      x += dx * speed;
+      y += dy * speed;
+
+      var walking = dist > 8;
+      pet.classList.toggle('dash', walking && (now < dashUntil || dist > 220));
+
+      // arrived at the click point — pounce on it
+      if (clickChase && dist < 16){
+        clickChase = false;
+        playUntil = now + 1200;
+        nextPlay = now + 5000 + Math.random() * 5000;
+        pet.classList.add('play');
+        setTimeout(function(){ pet.classList.remove('play'); }, 1250);
+      }
+      if (dx > 1) pet.classList.remove('flip');
+      else if (dx < -1) pet.classList.add('flip');
+
+      // lean into vertical movement
+      var lean = Math.max(-14, Math.min(14, dy * speed * 6));
+      pet.style.transform = 'translate(' + x + 'px,' + y + 'px) rotate(' + lean + 'deg)';
+
+      var idleFor = now - lastActive;
+      var playing = now < playUntil;
+
+      pet.classList.toggle('walk', walking);
+      pet.classList.toggle('sleep', !walking && !playing && idleFor > 12000);
+
+      // pounce at the cursor when it has caught up and you linger
+      if (!walking && !playing && idleFor > 900 && idleFor < 12000 && now > nextPlay){
+        playUntil = now + 1200;
+        nextPlay = now + 5000 + Math.random() * 5000;
+        pet.classList.add('play');
+        setTimeout(function(){ pet.classList.remove('play'); }, 1250);
+      }
+      requestAnimationFrame(petLoop);
+    }
+    requestAnimationFrame(petLoop);
+  })();
+
+  /* ---- Catppuccin flavor toggle ---- */
+  var swatches = document.querySelectorAll('.tswatch');
+  var saved = null;
+  try { saved = localStorage.getItem('cat-flavor'); } catch(e){}
+  if (saved) swatches.forEach(function(s){
+    s.classList.toggle('active', s.dataset.flavor === saved);
+  });
+  swatches.forEach(function(s){
+    s.addEventListener('click', function(){
+      var f = s.dataset.flavor;
+      document.documentElement.setAttribute('data-theme', f);
+      try { localStorage.setItem('cat-flavor', f); } catch(e){}
+      swatches.forEach(function(x){ x.classList.toggle('active', x === s); });
+      document.dispatchEvent(new Event('themechange'));
+    });
+  });
+
+  /* ---- mobile nav ---- */
+  var navEl = document.querySelector('nav');
+  var burger = document.querySelector('.nav-burger');
+  if (navEl && burger){
+    burger.addEventListener('click', function(){
+      var open = navEl.classList.toggle('open');
+      burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    navEl.querySelectorAll('.nav-links a').forEach(function(a){
+      a.addEventListener('click', function(){
+        navEl.classList.remove('open');
+        burger.setAttribute('aria-expanded','false');
+      });
+    });
+  }
 
   if (!fine || reduced) return;
   document.body.classList.add('fx');
@@ -956,13 +1528,20 @@ footer .heart{color:var(--red)}
     el.addEventListener('mouseleave', function(){ ring.classList.remove('on'); });
   });
 
-  /* ---- card spotlight follows the mouse ---- */
+  /* ---- card spotlight + cover parallax follow the mouse ---- */
   document.querySelectorAll('.card').forEach(function(card){
     card.addEventListener('mousemove', function(e){
       var r = card.getBoundingClientRect();
-      card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
-      card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+      var x = e.clientX - r.left, y = e.clientY - r.top;
+      card.style.setProperty('--mx', x + 'px');
+      card.style.setProperty('--my', y + 'px');
+      card.style.setProperty('--px', ((x / r.width)  - 0.5) * 2);
+      card.style.setProperty('--py', ((y / r.height) - 0.5) * 2);
     }, {passive:true});
+    card.addEventListener('mouseleave', function(){
+      card.style.setProperty('--px', 0);
+      card.style.setProperty('--py', 0);
+    });
   });
 
   /* ---- magnetic buttons ---- */
