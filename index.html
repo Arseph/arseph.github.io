@@ -493,54 +493,164 @@ section{max-width:var(--maxw);margin:0 auto;padding:90px 24px}
   @keyframes heroExit{to{opacity:.15;transform:translateY(-60px) scale(.96)}}
 }
 
-/* ---------- skill install log — streaming terminal ---------- */
+/* ---------- skill install log — 3D laptop scene ---------- */
 .skills-strip{
   border-block:1px solid var(--surface0);
   background:var(--mantle);
-  padding:34px 24px;
+  padding:70px 24px 40px;
   display:flex;justify-content:center;
-  perspective:1100px;
+  overflow:visible;
 }
+.lap-scene{position:relative;width:100%;max-width:840px;perspective:1700px}
+
+/* decorative floor tiles (gradient outlines, like the reference) */
+.tile{
+  position:absolute;border-radius:14px;
+  border:2px solid transparent;
+  background:linear-gradient(var(--mantle),var(--mantle)) padding-box,
+             linear-gradient(135deg,var(--peach),var(--mauve)) border-box;
+  transform:rotateX(58deg) rotateZ(45deg);
+  animation:tileFloat 6s ease-in-out infinite;
+  opacity:.75;
+}
+@keyframes tileFloat{0%,100%{translate:0 0}50%{translate:0 -8px}}
+.tl1{width:52px;height:52px;left:1%;bottom:8px;animation-delay:.6s}
+.tl2{width:34px;height:34px;right:2%;bottom:110px;animation-delay:2s}
+.tl3{width:26px;height:26px;right:0;bottom:36px;animation-delay:3.4s}
+.tl4{width:20px;height:20px;left:6%;top:34px;animation-delay:1.2s}
+
+/* the laptop */
+.laptop{
+  position:relative;margin:0 auto;width:min(92%,680px);
+  transform-style:preserve-3d;
+  transform:rotateX(18deg) rotateY(-26deg) rotateZ(6deg);
+  transition:transform .7s cubic-bezier(.2,.8,.2,1);
+}
+/* flattens toward you on hover so the log is easy to read */
+.skills-strip:hover .laptop{transform:rotateX(6deg) rotateY(-7deg) rotateZ(1deg)}
+/* soft ground shadow under the slanted laptop */
+.lap-scene::after{
+  content:'';position:absolute;left:50%;bottom:-4px;translate:-46% 0;
+  width:78%;height:46px;border-radius:50%;
+  background:radial-gradient(50% 50% at 50% 50%, rgba(var(--shadow-rgb),.55), transparent 70%);
+  filter:blur(10px);z-index:-1;
+}
+.lap-screen{
+  position:relative;
+  padding:14px 14px 18px;
+  border-radius:20px 20px 6px 6px;
+  background:linear-gradient(125deg,var(--lavender),var(--mauve) 55%,var(--pink));
+  box-shadow:0 30px 70px -24px rgba(var(--shadow-rgb),.85), inset 0 1px 0 rgba(255,255,255,.25);
+}
+.lap-screen .cam{
+  position:absolute;top:6px;left:50%;translate:-50% 0;
+  width:6px;height:6px;border-radius:50%;
+  background:var(--crust);box-shadow:inset 0 0 2px rgba(255,255,255,.4);
+}
+/* keyboard base, foreshortened toward the viewer */
+.lap-base{
+  position:relative;height:170px;width:112%;margin-left:-6%;
+  transform:rotateX(72deg);transform-origin:top center;
+  border-radius:12px 12px 34px 34px;
+  background:linear-gradient(180deg,
+    color-mix(in srgb,var(--lavender) 80%, white) 0%,
+    var(--lavender) 35%, var(--mauve) 100%);
+  box-shadow:0 40px 60px -20px rgba(var(--shadow-rgb),.8),
+    inset 0 2px 0 rgba(255,255,255,.35);
+}
+/* keys */
+.lap-base::before{
+  content:'';position:absolute;left:7%;right:7%;top:14px;height:82px;border-radius:8px;
+  background-image:
+    repeating-linear-gradient(90deg, rgba(var(--shadow-rgb),.55) 0 26px, transparent 26px 32px),
+    repeating-linear-gradient(0deg, rgba(var(--shadow-rgb),.55) 0 12px, transparent 12px 18px);
+  background-blend-mode:normal;
+  -webkit-mask-image:repeating-linear-gradient(90deg, black 0 26px, transparent 26px 32px),
+    repeating-linear-gradient(0deg, black 0 12px, transparent 12px 18px);
+  -webkit-mask-composite:source-in;
+  mask-composite:intersect;
+  opacity:.85;
+}
+/* trackpad */
+.lap-base::after{
+  content:'';position:absolute;left:50%;bottom:14px;translate:-50% 0;
+  width:130px;height:44px;border-radius:10px;
+  background:rgba(var(--shadow-rgb),.18);
+  box-shadow:inset 0 0 0 1.5px rgba(var(--shadow-rgb),.3);
+}
+
+/* coffee, with paw print and steam */
+.coffee{position:absolute;left:-6px;bottom:150px;width:78px;z-index:2;animation:tileFloat 7s ease-in-out infinite}
+.coffee .cup{
+  position:relative;width:64px;height:88px;margin:0 auto;
+  border-radius:8px 8px 22px 22px / 6px 6px 26px 26px;
+  background:linear-gradient(115deg,
+    color-mix(in srgb,var(--lavender) 75%, white),
+    var(--lavender) 55%, var(--mauve));
+  box-shadow:0 18px 34px -14px rgba(var(--shadow-rgb),.8), inset -8px 0 14px rgba(var(--shadow-rgb),.15);
+  clip-path:polygon(4% 0, 96% 0, 88% 100%, 12% 100%);
+}
+.coffee .lid{
+  position:absolute;left:50%;top:-7px;translate:-50% 0;
+  width:70px;height:16px;border-radius:50%;
+  background:linear-gradient(180deg, color-mix(in srgb,var(--lavender) 60%, white), var(--lavender));
+  box-shadow:inset 0 -3px 6px rgba(var(--shadow-rgb),.35);
+}
+.coffee .lid::after{
+  content:'';position:absolute;left:50%;top:4px;translate:-50% 0;
+  width:44px;height:7px;border-radius:50%;
+  background:rgba(var(--shadow-rgb),.5);
+}
+.coffee .paw{position:absolute;left:50%;top:38px;translate:-50% 0;width:26px;fill:rgba(var(--shadow-rgb),.45)}
+.coffee .steam{
+  position:absolute;left:50%;top:-46px;width:5px;height:34px;border-radius:50%;
+  background:linear-gradient(180deg, transparent, rgba(var(--text-rgb),.55));
+  filter:blur(3px);
+  animation:steamUp 2.8s ease-in-out infinite;
+}
+.coffee .steam.s2{margin-left:9px;height:26px;animation-delay:1.3s}
+@keyframes steamUp{
+  0%{opacity:0;transform:translateY(10px) scaleY(.6) skewX(0deg)}
+  35%{opacity:.8}
+  70%{transform:translateY(-8px) scaleY(1.1) skewX(-8deg)}
+  100%{opacity:0;transform:translateY(-20px) scaleY(1.2) skewX(6deg)}
+}
+
+/* the terminal on the screen */
 .skill-term{
-  width:100%;max-width:660px;
+  width:100%;
   background:var(--crust);
-  border:1px solid var(--surface0);
-  border-radius:var(--radius);
+  border:1px solid rgba(var(--shadow-rgb),.5);
+  border-radius:10px;
   overflow:hidden;
-  font-family:var(--mono);font-size:.8rem;
-  box-shadow:0 24px 60px -24px rgba(var(--shadow-rgb),.9);
-  transform:rotateX(7deg);
-  transition:transform .5s cubic-bezier(.2,.8,.2,1), box-shadow .5s;
-}
-.skills-strip:hover .skill-term{
-  transform:rotateX(0deg);
-  box-shadow:0 30px 70px -24px rgba(var(--mauve-rgb),.35);
+  font-family:var(--mono);font-size:.84rem;
 }
 .skill-term .st-bar{
-  display:flex;align-items:center;gap:8px;padding:10px 16px;
-  background:var(--mantle);border-bottom:1px solid var(--surface0);
+  display:flex;align-items:center;gap:8px;padding:11px 16px;
+  background:color-mix(in srgb, var(--crust) 70%, var(--mantle));
+  border-bottom:1px solid rgba(var(--surface0-rgb),.8);
 }
 .skill-term .st-bar .dot{width:10px;height:10px}
-.skill-term .st-title{margin-left:auto;margin-right:auto;color:var(--overlay);font-size:.68rem}
-.skill-term .st-cmd{padding:12px 18px 4px;color:var(--text)}
+.skill-term .st-title{margin-left:auto;margin-right:auto;color:var(--overlay);font-size:.7rem}
+.skill-term .st-cmd{padding:13px 18px 4px;color:var(--text)}
 .skill-term .st-cmd .chev{color:var(--mauve);margin-right:8px}
 .skill-term .st-cmd .c-name{color:var(--green)}
 .skill-term .st-cmd .flag{color:var(--peach)}
 .st-log{
-  position:relative;height:132px;overflow:hidden;padding:0 18px;
-  mask-image:linear-gradient(180deg,transparent,black 18%,black 78%,transparent);
-  -webkit-mask-image:linear-gradient(180deg,transparent,black 18%,black 78%,transparent);
+  position:relative;height:190px;overflow:hidden;padding:0 18px;
+  mask-image:linear-gradient(180deg,transparent,black 14%,black 82%,transparent);
+  -webkit-mask-image:linear-gradient(180deg,transparent,black 14%,black 82%,transparent);
 }
 .st-log ul{list-style:none;animation:logScroll 30s linear infinite}
 .skills-strip:hover .st-log ul{animation-play-state:paused}
 @keyframes logScroll{from{transform:translateY(0)}to{transform:translateY(-50%)}}
-.st-log li{line-height:2;white-space:nowrap;color:var(--subtext)}
+.st-log li{line-height:2.05;white-space:nowrap;color:var(--subtext)}
 .st-log .ok{color:var(--green);margin-right:9px}
 .st-log .pkg{color:var(--pc,var(--text));font-weight:500}
 .st-log .ver{color:var(--overlay)}
 .st-log .fill-dots{color:var(--surface2);letter-spacing:2px;margin:0 8px}
 .st-log .done{color:var(--teal)}
-.st-log .t{color:var(--subtext0);margin-left:8px;font-size:.72rem}
+.st-log .t{color:var(--subtext0);margin-left:8px;font-size:.74rem}
 .st-log li:nth-child(5n+1) .pkg{--pc:var(--mauve)}
 .st-log li:nth-child(5n+2) .pkg{--pc:var(--blue)}
 .st-log li:nth-child(5n+3) .pkg{--pc:var(--green)}
@@ -565,11 +675,44 @@ section{max-width:var(--maxw);margin:0 auto;padding:90px 24px}
   78%{width:91%}
   100%{width:100%}
 }
-.skill-term .st-foot .pct{font-size:.7rem;color:var(--green)}
+.skill-term .st-foot .pct{font-size:.72rem;color:var(--green)}
+@media(max-width:900px){
+  .coffee{display:none}
+  .laptop{transform:rotateX(14deg) rotateY(-14deg) rotateZ(3deg)}
+  .skills-strip:hover .laptop{transform:rotateX(5deg) rotateY(-4deg) rotateZ(0deg)}
+}
 @media(max-width:640px){
-  .skills-strip{padding:26px 14px}
-  .skill-term{font-size:.68rem}
-  .st-log{height:112px}
+  .skills-strip{padding:30px 16px 18px}
+  .lap-scene{max-width:340px}
+  .laptop{width:100%;transform:rotateX(10deg) rotateY(-6deg) rotateZ(1deg)}
+  .lap-screen{padding:8px 8px 10px;border-radius:12px 12px 4px 4px}
+  .lap-screen .cam{width:4px;height:4px;top:3px}
+  .skill-term{font-size:.58rem;border-radius:7px}
+  .skill-term .st-bar{padding:7px 10px;gap:6px}
+  .skill-term .st-bar .dot{width:7px;height:7px}
+  .skill-term .st-cmd{padding:8px 12px 2px}
+  .st-log{height:96px;padding:0 12px}
+  .st-log li{line-height:1.9}
+  .skill-term .st-foot{padding:6px 12px 10px}
+  .skill-term .st-foot .bar{height:4px;margin:0 8px}
+  .lap-base{height:64px;border-radius:8px 8px 20px 20px}
+  .lap-base::before{top:8px;height:34px}
+  .lap-base::after{width:76px;height:18px;bottom:8px;border-radius:6px}
+  .lap-scene::after{height:24px}
+  .tile{display:none}
+}
+
+/* scroll-linked zoom: the laptop flies toward you and fades as it leaves,
+   and settles back into place when you scroll up (fully reversible) */
+@supports (animation-timeline: view()){
+  .lap-scene{
+    animation:lapZoom linear both;
+    animation-timeline:view();
+    animation-range:exit 0% exit 85%;
+  }
+  @keyframes lapZoom{
+    to{scale:2.05;opacity:0;translate:0 -70px}
+  }
 }
 
 /* ---------- projects ---------- */
@@ -1041,49 +1184,6 @@ footer .heart{color:var(--red)}
   </div>
 </header>
 
-<div class="skills-strip" aria-hidden="true">
-  <div class="skill-term">
-    <div class="st-bar">
-      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
-      <span class="st-title">aron@dev: ~ — installing skills</span>
-    </div>
-    <div class="st-cmd"><span class="chev">❯</span><span class="c-name">stack</span> install <span class="flag">--all --with-experience</span></div>
-    <div class="st-log">
-      <ul>
-    <li><span class="ok">✓</span><span class="pkg">laravel</span><span class="ver">@stable</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.42s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">vue</span><span class="ver">@3.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.31s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">react-native</span><span class="ver">@latest</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.87s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">expo</span><span class="ver">@sdk-52</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.64s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">nuxt</span><span class="ver">@3.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.53s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">typescript</span><span class="ver">@5.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.28s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">vuetify</span><span class="ver">@3.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.36s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">mysql</span><span class="ver">@8.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.71s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">php</span><span class="ver">@8.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.24s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">firebase</span><span class="ver">@modular</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.58s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">capacitor</span><span class="ver">@6.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.49s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">csharp</span><span class="ver">@dotnet</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.66s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">ubuntu-server</span><span class="ver">@lts</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">1.02s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">figma-to-code</span><span class="ver">@design</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.19s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">laravel</span><span class="ver">@stable</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.42s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">vue</span><span class="ver">@3.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.31s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">react-native</span><span class="ver">@latest</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.87s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">expo</span><span class="ver">@sdk-52</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.64s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">nuxt</span><span class="ver">@3.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.53s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">typescript</span><span class="ver">@5.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.28s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">vuetify</span><span class="ver">@3.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.36s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">mysql</span><span class="ver">@8.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.71s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">php</span><span class="ver">@8.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.24s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">firebase</span><span class="ver">@modular</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.58s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">capacitor</span><span class="ver">@6.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.49s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">csharp</span><span class="ver">@dotnet</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.66s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">ubuntu-server</span><span class="ver">@lts</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">1.02s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">figma-to-code</span><span class="ver">@design</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.19s</span></li>
-      </ul>
-    </div>
-    <div class="st-foot"><span class="chev">❯</span>resolving<span class="bar"><i></i></span><span class="pct">14/14 ✓</span></div>
-  </div>
-</div>
-
 <section id="work">
   <div class="sec-head reveal">
     <span class="seg dir"> ~</span><span class="seg name">/work</span>
@@ -1206,6 +1306,66 @@ footer .heart{color:var(--red)}
   </div>
 </section>
 
+<div class="skills-strip" aria-hidden="true">
+  <div class="lap-scene">
+    <span class="tile tl1"></span><span class="tile tl2"></span>
+    <span class="tile tl3"></span><span class="tile tl4"></span>
+    <div class="coffee">
+      <span class="steam s1"></span><span class="steam s2"></span>
+      <div class="lid"></div>
+      <div class="cup">
+        <svg class="paw" viewBox="0 0 24 20"><circle cx="6" cy="5" r="2.5"/><circle cx="12" cy="3.4" r="2.5"/><circle cx="18" cy="5" r="2.5"/><ellipse cx="12" cy="12.5" rx="5.4" ry="4.4"/></svg>
+      </div>
+    </div>
+    <div class="laptop">
+      <div class="lap-screen">
+        <div class="cam"></div>
+        <div class="skill-term">
+    <div class="st-bar">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="st-title">aron@dev: ~ — installing skills</span>
+    </div>
+    <div class="st-cmd"><span class="chev">❯</span><span class="c-name">stack</span> install <span class="flag">--all --with-experience</span></div>
+    <div class="st-log">
+      <ul>
+    <li><span class="ok">✓</span><span class="pkg">laravel</span><span class="ver">@stable</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.42s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">vue</span><span class="ver">@3.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.31s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">react-native</span><span class="ver">@latest</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.87s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">expo</span><span class="ver">@sdk-52</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.64s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">nuxt</span><span class="ver">@3.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.53s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">typescript</span><span class="ver">@5.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.28s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">vuetify</span><span class="ver">@3.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.36s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">mysql</span><span class="ver">@8.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.71s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">php</span><span class="ver">@8.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.24s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">firebase</span><span class="ver">@modular</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.58s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">capacitor</span><span class="ver">@6.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.49s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">csharp</span><span class="ver">@dotnet</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.66s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">ubuntu-server</span><span class="ver">@lts</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">1.02s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">figma-to-code</span><span class="ver">@design</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.19s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">laravel</span><span class="ver">@stable</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.42s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">vue</span><span class="ver">@3.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.31s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">react-native</span><span class="ver">@latest</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.87s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">expo</span><span class="ver">@sdk-52</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.64s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">nuxt</span><span class="ver">@3.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.53s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">typescript</span><span class="ver">@5.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.28s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">vuetify</span><span class="ver">@3.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.36s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">mysql</span><span class="ver">@8.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.71s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">php</span><span class="ver">@8.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.24s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">firebase</span><span class="ver">@modular</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.58s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">capacitor</span><span class="ver">@6.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.49s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">csharp</span><span class="ver">@dotnet</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.66s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">ubuntu-server</span><span class="ver">@lts</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">1.02s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">figma-to-code</span><span class="ver">@design</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.19s</span></li>
+      </ul>
+    </div>
+    <div class="st-foot"><span class="chev">❯</span>resolving<span class="bar"><i></i></span><span class="pct">14/14 ✓</span></div>
+  </div>
+      </div>
+      <div class="lap-base"></div>
+    </div>
+  </div>
+</div>
+
 <section id="about">
   <div class="sec-head reveal">
     <span class="seg dir"> ~</span><span class="seg name">/about</span>
@@ -1258,7 +1418,7 @@ footer .heart{color:var(--red)}
 </section>
 
 <footer>
-  © 2026 Aron Joseph @ j2b — built with <span class="heart">♥</span>
+  © 2026 Aron Joseph @ j2b — built with <span class="heart">♥</span> <a href="https://catppuccin.com" target="_blank" rel="noopener">Inspired by Catppuccin Theme</a>
 </footer>
 
 <div class="cursor-ring" aria-hidden="true"></div>
