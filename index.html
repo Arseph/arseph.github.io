@@ -431,19 +431,6 @@ section{max-width:var(--maxw);margin:0 auto;padding:90px 24px}
     animation-range:entry 0% entry 50%;
   }
   @keyframes wipe{to{clip-path:inset(0 0 0 0)}}
-
-  /* stats count up as they scroll in */
-  .num{font-size:0}
-  .num::after{
-    content:counter(cc);
-    counter-reset:cc var(--n);
-    font-size:1.9rem;font-weight:800;font-family:var(--display);
-  }
-  .stat .num{
-    animation:countUp 1.2s cubic-bezier(.2,.8,.2,1) forwards;
-    animation-timeline:view();
-    animation-range:entry 0% entry 70%;
-  }
   @keyframes countUp{from{--n:0}to{--n:var(--t)}}
 
   /* contact heading rises word by word */
@@ -811,7 +798,6 @@ section{max-width:var(--maxw);margin:0 auto;padding:90px 24px}
 .photo-frame{position:relative;width:250px}
 @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
 @property --ring{syntax:'<angle>';initial-value:0deg;inherits:false}
-@property --n{syntax:'<integer>';initial-value:0;inherits:false}
 .avatar{
   width:250px;aspect-ratio:1;border-radius:50%;padding:6px;
   background:conic-gradient(from var(--ring),var(--mauve),var(--blue),var(--teal),var(--green),var(--pink),var(--mauve));
@@ -1505,9 +1491,9 @@ footer .heart{color:var(--red)}
       <p>I like owning the <strong>entire stack</strong>: schema design, Laravel APIs, Vue 3 and Nuxt frontends, React Native apps built and shipped with Expo, PWAs packaged for Android with Capacitor, and the Ubuntu servers underneath. I started as a UI/UX designer, so the Figma-to-production pipeline is all one motion for me — and it shows in the details, from database indexes to the exact spacing on a payroll PDF.</p>
     </div>
     <div class="stat-stack">
-      <div class="stat reveal-scale"><b><span class="num" style="--t:7">7</span></b><small>years in programming industry</small></div>
-      <div class="stat reveal-scale"><b><span class="num" style="--t:10">10</span>+</b><small>websites &amp; systems implemented</small></div>
-      <div class="stat reveal-scale"><b><span class="num" style="--t:3">3</span></b><small>platforms — web, PWA, mobile</small></div>
+      <div class="stat reveal-scale"><b><span class="num" data-target="7">0</span></b><small>years in programming industry</small></div>
+      <div class="stat reveal-scale"><b><span class="num" data-target="10">0</span>+</b><small>websites &amp; systems implemented</small></div>
+      <div class="stat reveal-scale"><b><span class="num" data-target="3">0</span></b><small>platforms — Web, PWA, Mobile</small></div>
     </div>
   </div>
 </section>
@@ -2204,6 +2190,42 @@ void main(){
   }, { threshold: 0.2, rootMargin: '0px 0px -10% 0px' });
 
   targets.forEach(function(el){ io.observe(el); });
+})();
+</script>
+<script>
+(function(){
+  var nums = document.querySelectorAll('.num[data-target]');
+  if (!nums.length) return;
+
+  var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function animateCount(el){
+    var target = parseInt(el.dataset.target, 10) || 0;
+    if (reduced){ el.textContent = target; return; }
+
+    var duration = 1200; // ms
+    var start = performance.now();
+
+    function tick(now){
+      var p = Math.min(1, (now - start) / duration);
+      var eased = 1 - Math.pow(1 - p, 3); // ease-out cubic
+      el.textContent = Math.round(eased * target);
+      if (p < 1) requestAnimationFrame(tick);
+      else el.textContent = target;
+    }
+    requestAnimationFrame(tick);
+  }
+
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if (entry.isIntersecting){
+        animateCount(entry.target);
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.4 });
+
+  nums.forEach(function(el){ io.observe(el); });
 })();
 </script>
 </body>
