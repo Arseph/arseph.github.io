@@ -105,10 +105,6 @@ body{transition:background-color .4s ease, color .4s ease}
   background:linear-gradient(90deg,var(--mauve),var(--blue),var(--teal),var(--green));
   transform-origin:left;transform:scaleX(0);
 }
-@supports (animation-timeline: scroll()){
-  .scroll-progress{animation:progress linear forwards;animation-timeline:scroll(root)}
-  @keyframes progress{to{transform:scaleX(1)}}
-}
 
 /* ---------- ambient background ---------- */
 .ambient{position:fixed;inset:0;z-index:-1;overflow:hidden;background:
@@ -375,110 +371,6 @@ section{max-width:var(--maxw);margin:0 auto;padding:90px 24px}
 
 /* ---------- scroll-driven animations (with graceful fallback) ---------- */
 .reveal,.reveal-left,.reveal-right,.reveal-scale{opacity:1}
-@supports (animation-timeline: view()){
-  .reveal{
-    opacity:0;transform:translateY(38px);filter:blur(4px);
-    animation:reveal .8s cubic-bezier(.2,.8,.2,1) forwards;
-    animation-timeline:view();
-    animation-range:entry 0% entry 45%;
-  }
-  @keyframes reveal{to{opacity:1;transform:translateY(0);filter:blur(0)}}
-
-  .reveal-left{
-    opacity:0;transform:translateX(-90px) rotateY(28deg) translateZ(-90px);filter:blur(4px);
-    animation:revealXL .8s cubic-bezier(.2,.8,.2,1) forwards;
-    animation-timeline:view();
-    animation-range:entry 0% entry 48%;
-  }
-  .reveal-right{
-    opacity:0;transform:translateX(90px) rotateY(-28deg) translateZ(-90px);filter:blur(4px);
-    animation:revealXR .8s cubic-bezier(.2,.8,.2,1) forwards;
-    animation-timeline:view();
-    animation-range:entry 0% entry 48%;
-  }
-  @keyframes revealXL{to{opacity:1;transform:translateX(0) rotateY(0) translateZ(0);filter:blur(0)}}
-  @keyframes revealXR{to{opacity:1;transform:translateX(0) rotateY(0) translateZ(0);filter:blur(0)}}
-  .grid{perspective:1200px}
-
-  .reveal-scale{
-    opacity:0;transform:scale(.75) rotate(-4deg);
-    animation:revealS .8s cubic-bezier(.34,1.4,.4,1) forwards;
-    animation-timeline:view();
-    animation-range:entry 0% entry 50%;
-  }
-  @keyframes revealS{to{opacity:1;transform:scale(1) rotate(0)}}
-
-  /* staggered ranges: later items finish deeper into the viewport */
-  .grid > :nth-child(2n){animation-range:entry 8% entry 56%}
-  .stat-stack > :nth-child(1){animation-range:entry 0% entry 42%}
-  .stat-stack > :nth-child(2){animation-range:entry 6% entry 50%}
-  .stat-stack > :nth-child(3){animation-range:entry 12% entry 58%}
-
-  /* section header rule sweeps in */
-  .sec-head .rule{
-    transform:scaleX(0);
-    animation:ruleGrow .9s cubic-bezier(.2,.8,.2,1) forwards;
-    animation-timeline:view();
-    animation-range:entry 0% entry 60%;
-  }
-  @keyframes ruleGrow{to{transform:scaleX(1)}}
-
-  /* section titles wipe in */
-  .sec-head h2{
-    clip-path:inset(0 100% 0 0);
-    animation:wipe .8s cubic-bezier(.2,.8,.2,1) forwards;
-    animation-timeline:view();
-    animation-range:entry 0% entry 50%;
-  }
-  @keyframes wipe{to{clip-path:inset(0 0 0 0)}}
-  @keyframes countUp{from{--n:0}to{--n:var(--t)}}
-
-  /* contact heading rises word by word */
-  .wclip{display:inline-block;overflow:hidden;vertical-align:bottom}
-  .wclip .w{
-    display:inline-block;transform:translateY(110%);
-    animation:wordUp .7s cubic-bezier(.2,.8,.2,1) forwards;
-    animation-timeline:view();
-  }
-  .wclip:nth-child(1) .w{animation-range:entry 0% entry 45%}
-  .wclip:nth-child(2) .w{animation-range:entry 6% entry 51%}
-  .wclip:nth-child(3) .w{animation-range:entry 12% entry 57%}
-  .wclip:nth-child(4) .w{animation-range:entry 18% entry 63%}
-  .wclip:nth-child(5) .w{animation-range:entry 24% entry 69%}
-  @keyframes wordUp{to{transform:translateY(0)}}
-
-  /* ambient parallax — backdrop drifts slowly against scroll */
-  .ambient{
-    inset:-10% 0;
-    animation:ambientPar linear both;
-    animation-timeline:scroll(root);
-  }
-  @keyframes ambientPar{from{transform:translateY(0)}to{transform:translateY(-5%)}}
-
-  /* big outline band couples to page scroll */
-  .bigband .row1{animation:bandL linear both;animation-timeline:scroll(root)}
-  .bigband .row2{animation:bandR linear both;animation-timeline:scroll(root)}
-  @keyframes bandL{from{transform:translateX(0)}to{transform:translateX(-18%)}}
-  @keyframes bandR{from{transform:translateX(-18%)}to{transform:translateX(0)}}
-
-  /* contact section zooms up gently */
-  .contact .reveal{
-    transform:translateY(50px) scale(.96);
-    animation-name:contactIn;
-  }
-  @keyframes contactIn{to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
-
-  /* hero drifts away as you scroll past it */
-  .hero-left,.terminal{
-    animation-name:rise,heroExit;
-    animation-duration:.9s,1s;
-    animation-timeline:auto,view();
-    animation-range:normal,exit 0% exit 100%;
-    animation-fill-mode:both,forwards;
-  }
-  .terminal{animation-name:termIn,heroExit;animation-duration:1s,1s}
-  @keyframes heroExit{to{opacity:.15;transform:translateY(-60px) scale(.96)}}
-}
 
 /* ---------- skill install log — 3D laptop scene ---------- */
 .skills-strip{
@@ -487,6 +379,7 @@ section{max-width:var(--maxw);margin:0 auto;padding:90px 24px}
   padding:70px 24px 40px;
   display:flex;justify-content:center;
   overflow:visible;
+  z-index:1000;position:relative;
 }
 .lap-scene{position:relative;width:100%;max-width:840px;perspective:1700px}
 
@@ -687,19 +580,6 @@ section{max-width:var(--maxw);margin:0 auto;padding:90px 24px}
   .lap-base::after{width:76px;height:18px;bottom:8px;border-radius:6px}
   .lap-scene::after{height:24px}
   .tile{display:none}
-}
-
-/* scroll-linked zoom: the laptop flies toward you and fades as it leaves,
-   and settles back into place when you scroll up (fully reversible) */
-@supports (animation-timeline: view()){
-  .lap-scene{
-    animation:lapZoom linear both;
-    animation-timeline:view();
-    animation-range:exit 0% exit 85%;
-  }
-  @keyframes lapZoom{
-    to{scale:2.05;opacity:0;translate:0 -70px}
-  }
 }
 
 /* ---------- projects ---------- */
@@ -1160,6 +1040,133 @@ footer .heart{color:var(--red)}
   .tw .tc{opacity:1}
   .tw-caret{display:none}
 }
+.hero{
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    z-index: 1;
+}
+
+@supports (animation-timeline: scroll()){
+  .scroll-progress{animation:progress linear forwards;animation-timeline:scroll(root)}
+  @keyframes progress{to{transform:scaleX(1)}}
+}
+/* scroll-linked zoom: the laptop flies toward you and fades as it leaves,
+   and settles back into place when you scroll up (fully reversible) */
+@supports (animation-timeline: view()){
+  .lap-scene{
+    animation:lapZoom linear both;
+    animation-timeline:view();
+    animation-range:exit 0% exit 85%;
+  }
+  @keyframes lapZoom{
+    to{scale:2.05;opacity:0;translate:0 -70px}
+  }
+}
+@supports (animation-timeline: view()){
+  .reveal{
+    opacity:0;transform:translateY(38px);filter:blur(4px);
+    animation:reveal .8s cubic-bezier(.2,.8,.2,1) forwards;
+    animation-timeline:view();
+    animation-range:entry 0% entry 45%;
+  }
+  @keyframes reveal{to{opacity:1;transform:translateY(0);filter:blur(0)}}
+
+  .reveal-left{
+    opacity:0;transform:translateX(-90px) rotateY(28deg) translateZ(-90px);filter:blur(4px);
+    animation:revealXL .8s cubic-bezier(.2,.8,.2,1) forwards;
+    animation-timeline:view();
+    animation-range:entry 0% entry 48%;
+  }
+  .reveal-right{
+    opacity:0;transform:translateX(90px) rotateY(-28deg) translateZ(-90px);filter:blur(4px);
+    animation:revealXR .8s cubic-bezier(.2,.8,.2,1) forwards;
+    animation-timeline:view();
+    animation-range:entry 0% entry 48%;
+  }
+  @keyframes revealXL{to{opacity:1;transform:translateX(0) rotateY(0) translateZ(0);filter:blur(0)}}
+  @keyframes revealXR{to{opacity:1;transform:translateX(0) rotateY(0) translateZ(0);filter:blur(0)}}
+  .grid{perspective:1200px}
+
+  .reveal-scale{
+    opacity:0;transform:scale(.75) rotate(-4deg);
+    animation:revealS .8s cubic-bezier(.34,1.4,.4,1) forwards;
+    animation-timeline:view();
+    animation-range:entry 0% entry 50%;
+  }
+  @keyframes revealS{to{opacity:1;transform:scale(1) rotate(0)}}
+
+  /* staggered ranges: later items finish deeper into the viewport */
+  .grid > :nth-child(2n){animation-range:entry 8% entry 56%}
+  .stat-stack > :nth-child(1){animation-range:entry 0% entry 42%}
+  .stat-stack > :nth-child(2){animation-range:entry 6% entry 50%}
+  .stat-stack > :nth-child(3){animation-range:entry 12% entry 58%}
+
+  /* section header rule sweeps in */
+  .sec-head .rule{
+    transform:scaleX(0);
+    animation:ruleGrow .9s cubic-bezier(.2,.8,.2,1) forwards;
+    animation-timeline:view();
+    animation-range:entry 0% entry 60%;
+  }
+  @keyframes ruleGrow{to{transform:scaleX(1)}}
+
+  /* section titles wipe in */
+  .sec-head h2{
+    clip-path:inset(0 100% 0 0);
+    animation:wipe .8s cubic-bezier(.2,.8,.2,1) forwards;
+    animation-timeline:view();
+    animation-range:entry 0% entry 50%;
+  }
+  @keyframes wipe{to{clip-path:inset(0 0 0 0)}}
+  @keyframes countUp{from{--n:0}to{--n:var(--t)}}
+
+  /* contact heading rises word by word */
+  .wclip{display:inline-block;overflow:hidden;vertical-align:bottom}
+  .wclip .w{
+    display:inline-block;transform:translateY(110%);
+    animation:wordUp .7s cubic-bezier(.2,.8,.2,1) forwards;
+    animation-timeline:view();
+  }
+  .wclip:nth-child(1) .w{animation-range:entry 0% entry 45%}
+  .wclip:nth-child(2) .w{animation-range:entry 6% entry 51%}
+  .wclip:nth-child(3) .w{animation-range:entry 12% entry 57%}
+  .wclip:nth-child(4) .w{animation-range:entry 18% entry 63%}
+  .wclip:nth-child(5) .w{animation-range:entry 24% entry 69%}
+  @keyframes wordUp{to{transform:translateY(0)}}
+
+  /* ambient parallax — backdrop drifts slowly against scroll */
+  .ambient{
+    inset:-10% 0;
+    animation:ambientPar linear both;
+    animation-timeline:scroll(root);
+  }
+  @keyframes ambientPar{from{transform:translateY(0)}to{transform:translateY(-5%)}}
+
+  /* big outline band couples to page scroll */
+  .bigband .row1{animation:bandL linear both;animation-timeline:scroll(root)}
+  .bigband .row2{animation:bandR linear both;animation-timeline:scroll(root)}
+  @keyframes bandL{from{transform:translateX(0)}to{transform:translateX(-18%)}}
+  @keyframes bandR{from{transform:translateX(-18%)}to{transform:translateX(0)}}
+
+  /* contact section zooms up gently */
+  .contact .reveal{
+    transform:translateY(50px) scale(.96);
+    animation-name:contactIn;
+  }
+  @keyframes contactIn{to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+
+  /* hero drifts away as you scroll past it */
+  .hero-left,.terminal{
+    animation-name:rise,heroExit;
+    animation-duration:.9s,1s;
+    animation-timeline:auto,view();
+    animation-range:normal,exit 0% exit 100%;
+    animation-fill-mode:both,forwards;
+  }
+  .terminal{animation-name:termIn,heroExit;animation-duration:1s,1s}
+  @keyframes heroExit{to{opacity:.15;transform:translateY(-60px) scale(.96)}}
+}
 </style>
 <script type="importmap">
 {
@@ -1348,6 +1355,34 @@ footer .heart{color:var(--red)}
   </div>
 </div>
 
+<section id="about">
+  <div class="sec-head reveal">
+    <span class="seg dir"> ~</span><span class="seg name">/about</span>
+    <h2>About me</h2>
+    <div class="rule"></div>
+  </div>
+  <div class="about-grid">
+    <div class="photo-frame reveal-scale">
+      <div class="avatar">
+        <div class="avatar-inner">
+          <img src="profile.webp" alt="Aron Joseph" width="444" height="414">
+        </div>
+      </div>
+      <span class="orbit" aria-hidden="true"></span>
+      <span class="badge">aron.joseph</span>
+    </div>
+    <div class="reveal">
+      <p>I'm a full-stack developer building the systems organizations run on — <strong>employee portals, biometric timekeeping, HRIS, and other platforms</strong> — currently working in the IT industry.</p>
+      <p>I like owning the <strong>entire stack</strong>: schema design, Laravel APIs, Vue 3 and Nuxt frontends, React Native apps built and shipped with Expo, PWAs packaged for Android with Capacitor, and the Ubuntu servers underneath. I started as a UI/UX designer, so the Figma-to-production pipeline is all one motion for me — and it shows in the details, from database indexes to the exact spacing on a payroll PDF.</p>
+    </div>
+    <div class="stat-stack">
+      <div class="stat reveal-scale"><b><span class="num" data-target="7">0</span></b><small>years in programming industry</small></div>
+      <div class="stat reveal-scale"><b><span class="num" data-target="10">0</span>+</b><small>websites &amp; systems implemented</small></div>
+      <div class="stat reveal-scale"><b><span class="num" data-target="3">0</span></b><small>platforms — Web, PWA, Mobile</small></div>
+    </div>
+  </div>
+</section>
+
 <section id="work">
   <div class="sec-head reveal">
     <span class="seg dir"> ~</span><span class="seg name">/work</span>
@@ -1470,33 +1505,6 @@ footer .heart{color:var(--red)}
   </div>
 </section>
 
-<section id="about">
-  <div class="sec-head reveal">
-    <span class="seg dir"> ~</span><span class="seg name">/about</span>
-    <h2>About me</h2>
-    <div class="rule"></div>
-  </div>
-  <div class="about-grid">
-    <div class="photo-frame reveal-scale">
-      <div class="avatar">
-        <div class="avatar-inner">
-          <img src="profile.webp" alt="Aron Joseph" width="444" height="414">
-        </div>
-      </div>
-      <span class="orbit" aria-hidden="true"></span>
-      <span class="badge">aron.joseph</span>
-    </div>
-    <div class="reveal">
-      <p>I'm a full-stack developer building the systems organizations run on — <strong>employee portals, biometric timekeeping, HRIS, and other platforms</strong> — currently working in the IT industry.</p>
-      <p>I like owning the <strong>entire stack</strong>: schema design, Laravel APIs, Vue 3 and Nuxt frontends, React Native apps built and shipped with Expo, PWAs packaged for Android with Capacitor, and the Ubuntu servers underneath. I started as a UI/UX designer, so the Figma-to-production pipeline is all one motion for me — and it shows in the details, from database indexes to the exact spacing on a payroll PDF.</p>
-    </div>
-    <div class="stat-stack">
-      <div class="stat reveal-scale"><b><span class="num" data-target="7">0</span></b><small>years in programming industry</small></div>
-      <div class="stat reveal-scale"><b><span class="num" data-target="10">0</span>+</b><small>websites &amp; systems implemented</small></div>
-      <div class="stat reveal-scale"><b><span class="num" data-target="3">0</span></b><small>platforms — Web, PWA, Mobile</small></div>
-    </div>
-  </div>
-</section>
 
 <div class="bigband" aria-hidden="true">
   <div class="row row1">
@@ -1534,6 +1542,12 @@ footer .heart{color:var(--red)}
 <script>
 (function(){
   'use strict';
+  const hero = document.querySelector(".hero");
+
+  window.addEventListener("scroll", () => {
+      hero.style.transform =
+          `translateY(${window.scrollY * 0.35}px)`;
+  });
   var fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
   var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   var mx = innerWidth/2, my = innerHeight/2;
