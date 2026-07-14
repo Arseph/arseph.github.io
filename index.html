@@ -1167,6 +1167,16 @@ footer .heart{color:var(--red)}
   .terminal{animation-name:termIn,heroExit;animation-duration:1s,1s}
   @keyframes heroExit{to{opacity:.15;transform:translateY(-60px) scale(.96)}}
 }
+@media (max-width: 760px){
+  .hero{
+    position: static !important;
+    min-height: auto !important;
+    top: auto !important;
+    z-index: auto !important;
+    transform: none !important;
+    bottom: auto !important;
+  }
+}
 </style>
 <script type="importmap">
 {
@@ -1543,11 +1553,12 @@ footer .heart{color:var(--red)}
 (function(){
   'use strict';
   const hero = document.querySelector(".hero");
-
-  window.addEventListener("scroll", () => {
-      hero.style.transform =
-          `translateY(${window.scrollY * 0.35}px)`;
-  });
+  const isMobile = matchMedia('(max-width: 760px)').matches;
+  if (!isMobile){
+    window.addEventListener("scroll", () => {
+        hero.style.transform = `translateY(${window.scrollY * 0.35}px)`;
+    });
+  }
   var fine = matchMedia('(hover:hover) and (pointer:fine)').matches;
   var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   var mx = innerWidth/2, my = innerHeight/2;
