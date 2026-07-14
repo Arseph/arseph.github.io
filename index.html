@@ -909,14 +909,48 @@ section{max-width:var(--maxw);margin:0 auto;padding:90px 24px}
 @keyframes bandDriftR{from{transform:translateX(-50%)}to{transform:translateX(0)}}
 
 /* ---------- contact ---------- */
-.contact{text-align:center;padding-bottom:120px}
+.contact{
+  position:relative;text-align:center;
+  max-width:none;               /* full-bleed so the video spans the screen */
+  padding:110px 24px 140px;
+  overflow:hidden;
+}
+.contact > *:not(.contact-bg){position:relative;z-index:1;max-width:var(--maxw);margin-left:auto;margin-right:auto}
+/* video layer — masked at the top so it dissolves out of the page background */
+.contact-bg{
+  position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;
+  mask-image:linear-gradient(180deg, transparent 0%, black 38%);
+  -webkit-mask-image:linear-gradient(180deg, transparent 0%, black 38%);
+}
+.contact-bg video{
+  width:100%;height:100%;object-fit:cover;display:block;
+}
+/* theme tint over the footage so it reads as part of the page, not a video */
+.contact-bg::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,
+    color-mix(in srgb, var(--base) 60%, transparent),
+    color-mix(in srgb, var(--base) 22%, transparent) 55%,
+    color-mix(in srgb, var(--base) 40%, transparent));
+}
+/* latte: invert the night footage into a light sky, same hue family */
+[data-theme="latte"] .contact-bg video{filter:invert(1) hue-rotate(180deg)}
+
 .contact h2{font-family:var(--display);font-size:clamp(1.9rem,4.5vw,3rem);font-weight:800;letter-spacing:-.02em;margin-bottom:14px}
 .contact p{color:var(--subtext);max-width:52ch;margin:0 auto 34px}
 .contact .cmdline{font-family:var(--mono);font-size:.85rem;color:var(--overlay);margin-bottom:26px}
 .contact .cmdline .c-name{color:var(--green)}
 .contact-links{display:flex;justify-content:center;gap:16px;flex-wrap:wrap}
-
-footer{border-top:1px solid var(--surface0);padding:26px 24px;text-align:center;font-family:var(--mono);font-size:.72rem;color:var(--overlay)}
+.contact-footer {
+  position: relative;
+  z-index: 2;
+  padding: 28px 24px;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: .72rem;
+  color: rgba(255,255,255,.75);
+  border-top: 1px solid rgba(255,255,255,.08);
+}
 footer .heart{color:var(--red)}
 
 /* ---------- custom cursor (fine pointers only) ---------- */
@@ -1017,9 +1051,24 @@ footer .heart{color:var(--red)}
   80%{transform:scaleX(-1.06) translateY(0) scaleY(.92)}
 }
 
-/* sleeping: closed eyes + floating z z z */
+/* sleeping: closed eyes, floating z z z */
+/* while sleeping, drift above the content so it is always visible */
+.pet.sleep{z-index:5}
 .pet.sleep .eye{animation:none;transform:scaleY(.12)}
 .pet.sleep .tail-g{animation:tailSway 6s ease-in-out infinite}
+/* dreamy float while asleep */
+.pet.sleep svg{animation:petFloat 3.6s ease-in-out infinite}
+.pet.flip.sleep svg{animation:petFloatF 3.6s ease-in-out infinite}
+@keyframes petFloat{
+  0%,100%{transform:translateY(0) rotate(0deg)}
+  50%{transform:translateY(-10px) rotate(3deg)}
+}
+@keyframes petFloatF{
+  0%,100%{transform:scaleX(-1) translateY(0) rotate(0deg)}
+  50%{transform:scaleX(-1) translateY(-10px) rotate(-3deg)}
+}
+/* curled paws tuck in while floating */
+.pet.sleep .leg{transform:rotate(24deg) scaleY(.7);transition:transform .6s ease}
 .pet .zzz{
   position:absolute;left:44px;top:-16px;
   font-family:var(--mono);font-weight:700;color:var(--lavender);
@@ -1033,6 +1082,46 @@ footer .heart{color:var(--red)}
   30%{opacity:.9}
   100%{opacity:0;transform:translateY(-10px)}
 }
+/* shocked! — startled jolt when touched */
+.pet .shock-mark{
+  position:absolute;left:46px;top:-24px;
+  font-family:var(--display);font-weight:800;font-size:1.2rem;
+  color:var(--red);opacity:0;pointer-events:none;
+}
+.pet.shock .shock-mark{animation:shockMark .95s cubic-bezier(.2,.8,.2,1)}
+@keyframes shockMark{
+  0%{opacity:0;transform:translateY(8px) scale(.3)}
+  16%{opacity:1;transform:translateY(-4px) scale(1.35)}
+  30%{transform:translateY(-6px) scale(1)}
+  75%{opacity:1;transform:translateY(-9px)}
+  100%{opacity:0;transform:translateY(-16px)}
+}
+.pet.shock svg{animation:shockJolt .95s cubic-bezier(.3,0,.3,1)}
+.pet.flip.shock svg{animation:shockJoltF .95s cubic-bezier(.3,0,.3,1)}
+@keyframes shockJolt{
+  0%{transform:translateY(0)}
+  10%{transform:translateY(-18px) scale(1.08,.9) rotate(-5deg)}
+  22%{transform:translateY(-15px) rotate(5deg)}
+  32%{transform:translateY(-16px) rotate(-4deg)}
+  42%{transform:translateY(-15px) rotate(3deg)}
+  56%{transform:translateY(0) scale(.94,1.08)}
+  68%{transform:translateY(-6px)}
+  80%,100%{transform:translateY(0) scale(1,1) rotate(0)}
+}
+@keyframes shockJoltF{
+  0%{transform:scaleX(-1) translateY(0)}
+  10%{transform:scaleX(-1.08) translateY(-18px) scaleY(.9) rotate(5deg)}
+  22%{transform:scaleX(-1) translateY(-15px) rotate(-5deg)}
+  32%{transform:scaleX(-1) translateY(-16px) rotate(4deg)}
+  42%{transform:scaleX(-1) translateY(-15px) rotate(-3deg)}
+  56%{transform:scaleX(-.94) translateY(0) scaleY(1.08)}
+  68%{transform:scaleX(-1) translateY(-6px)}
+  80%,100%{transform:scaleX(-1) translateY(0) rotate(0)}
+}
+/* wide startled eyes + rigid tail while shocked */
+.pet.shock .eye{animation:none;transform:scale(1.55)}
+.pet.shock .tail-g{animation:none;transform:rotate(32deg)}
+
 /* dashing: speed lines + faster gait */
 .pet .lines{position:absolute;left:-6px;top:20px;width:20px;height:18px;opacity:0;transition:opacity .15s}
 .pet.dash .lines{opacity:1}
@@ -1061,11 +1150,20 @@ footer .heart{color:var(--red)}
 @media(max-width:640px){.pet{width:52px;height:41px}}
 
 @media (prefers-reduced-motion: reduce){
+  .contact-bg video{display:none}
   *,*::before,*::after{animation-duration:.01ms !important;animation-delay:0s !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
   .line{width:100% !important}
   .reveal-out,.p2,.p3,.cursor{opacity:1}
 }
 </style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.143.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.143.0/examples/jsm/"
+  }
+}
+</script>
 </head>
 <body>
 <script>(function(){try{var t=localStorage.getItem('cat-flavor');if(t)document.documentElement.setAttribute('data-theme',t)}catch(e){}})();</script>
@@ -1092,6 +1190,7 @@ footer .heart{color:var(--red)}
 
 <div class="pet" id="catPet" aria-hidden="true">
   <span class="lines" aria-hidden="true"><i></i><i></i><i></i></span>
+  <span class="shock-mark" aria-hidden="true">!</span>
   <div class="zzz">z<span>z</span><i>z</i></div>
   <svg viewBox="0 0 66 52">
     <g class="tail-g"><path class="tail" d="M14 38 Q4 34 7 24"/></g>
@@ -1183,6 +1282,66 @@ footer .heart{color:var(--red)}
   </div>
   </div>
 </header>
+
+<div class="skills-strip" aria-hidden="true">
+  <div class="lap-scene">
+    <span class="tile tl1"></span><span class="tile tl2"></span>
+    <span class="tile tl3"></span><span class="tile tl4"></span>
+    <div class="coffee">
+      <span class="steam s1"></span><span class="steam s2"></span>
+      <div class="lid"></div>
+      <div class="cup">
+        <svg class="paw" viewBox="0 0 24 20"><circle cx="6" cy="5" r="2.5"/><circle cx="12" cy="3.4" r="2.5"/><circle cx="18" cy="5" r="2.5"/><ellipse cx="12" cy="12.5" rx="5.4" ry="4.4"/></svg>
+      </div>
+    </div>
+    <div class="laptop">
+      <div class="lap-screen">
+        <div class="cam"></div>
+        <div class="skill-term">
+    <div class="st-bar">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="st-title">aron@dev: ~ — installing skills</span>
+    </div>
+    <div class="st-cmd"><span class="chev">❯</span><span class="c-name">stack</span> install <span class="flag">--all --with-experience</span></div>
+    <div class="st-log">
+      <ul>
+    <li><span class="ok">✓</span><span class="pkg">laravel</span><span class="ver">@stable</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.42s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">vue</span><span class="ver">@3.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.31s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">react-native</span><span class="ver">@latest</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.87s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">expo</span><span class="ver">@sdk-52</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.64s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">nuxt</span><span class="ver">@3.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.53s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">typescript</span><span class="ver">@5.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.28s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">vuetify</span><span class="ver">@3.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.36s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">mysql</span><span class="ver">@8.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.71s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">php</span><span class="ver">@8.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.24s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">firebase</span><span class="ver">@modular</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.58s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">capacitor</span><span class="ver">@6.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.49s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">csharp</span><span class="ver">@dotnet</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.66s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">ubuntu-server</span><span class="ver">@lts</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">1.02s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">figma-to-code</span><span class="ver">@design</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.19s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">laravel</span><span class="ver">@stable</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.42s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">vue</span><span class="ver">@3.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.31s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">react-native</span><span class="ver">@latest</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.87s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">expo</span><span class="ver">@sdk-52</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.64s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">nuxt</span><span class="ver">@3.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.53s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">typescript</span><span class="ver">@5.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.28s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">vuetify</span><span class="ver">@3.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.36s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">mysql</span><span class="ver">@8.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.71s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">php</span><span class="ver">@8.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.24s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">firebase</span><span class="ver">@modular</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.58s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">capacitor</span><span class="ver">@6.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.49s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">csharp</span><span class="ver">@dotnet</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.66s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">ubuntu-server</span><span class="ver">@lts</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">1.02s</span></li>
+    <li><span class="ok">✓</span><span class="pkg">figma-to-code</span><span class="ver">@design</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.19s</span></li>
+      </ul>
+    </div>
+    <div class="st-foot"><span class="chev">❯</span>resolving<span class="bar"><i></i></span><span class="pct">14/14 ✓</span></div>
+  </div>
+      </div>
+      <div class="lap-base"></div>
+    </div>
+  </div>
+</div>
 
 <section id="work">
   <div class="sec-head reveal">
@@ -1306,66 +1465,6 @@ footer .heart{color:var(--red)}
   </div>
 </section>
 
-<div class="skills-strip" aria-hidden="true">
-  <div class="lap-scene">
-    <span class="tile tl1"></span><span class="tile tl2"></span>
-    <span class="tile tl3"></span><span class="tile tl4"></span>
-    <div class="coffee">
-      <span class="steam s1"></span><span class="steam s2"></span>
-      <div class="lid"></div>
-      <div class="cup">
-        <svg class="paw" viewBox="0 0 24 20"><circle cx="6" cy="5" r="2.5"/><circle cx="12" cy="3.4" r="2.5"/><circle cx="18" cy="5" r="2.5"/><ellipse cx="12" cy="12.5" rx="5.4" ry="4.4"/></svg>
-      </div>
-    </div>
-    <div class="laptop">
-      <div class="lap-screen">
-        <div class="cam"></div>
-        <div class="skill-term">
-    <div class="st-bar">
-      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
-      <span class="st-title">aron@dev: ~ — installing skills</span>
-    </div>
-    <div class="st-cmd"><span class="chev">❯</span><span class="c-name">stack</span> install <span class="flag">--all --with-experience</span></div>
-    <div class="st-log">
-      <ul>
-    <li><span class="ok">✓</span><span class="pkg">laravel</span><span class="ver">@stable</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.42s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">vue</span><span class="ver">@3.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.31s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">react-native</span><span class="ver">@latest</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.87s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">expo</span><span class="ver">@sdk-52</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.64s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">nuxt</span><span class="ver">@3.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.53s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">typescript</span><span class="ver">@5.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.28s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">vuetify</span><span class="ver">@3.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.36s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">mysql</span><span class="ver">@8.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.71s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">php</span><span class="ver">@8.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.24s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">firebase</span><span class="ver">@modular</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.58s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">capacitor</span><span class="ver">@6.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.49s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">csharp</span><span class="ver">@dotnet</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.66s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">ubuntu-server</span><span class="ver">@lts</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">1.02s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">figma-to-code</span><span class="ver">@design</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.19s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">laravel</span><span class="ver">@stable</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.42s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">vue</span><span class="ver">@3.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.31s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">react-native</span><span class="ver">@latest</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.87s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">expo</span><span class="ver">@sdk-52</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.64s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">nuxt</span><span class="ver">@3.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.53s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">typescript</span><span class="ver">@5.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.28s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">vuetify</span><span class="ver">@3.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.36s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">mysql</span><span class="ver">@8.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.71s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">php</span><span class="ver">@8.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.24s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">firebase</span><span class="ver">@modular</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.58s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">capacitor</span><span class="ver">@6.x</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.49s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">csharp</span><span class="ver">@dotnet</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.66s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">ubuntu-server</span><span class="ver">@lts</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">1.02s</span></li>
-    <li><span class="ok">✓</span><span class="pkg">figma-to-code</span><span class="ver">@design</span><span class="fill-dots">······</span><span class="done">installed</span><span class="t">0.19s</span></li>
-      </ul>
-    </div>
-    <div class="st-foot"><span class="chev">❯</span>resolving<span class="bar"><i></i></span><span class="pct">14/14 ✓</span></div>
-  </div>
-      </div>
-      <div class="lap-base"></div>
-    </div>
-  </div>
-</div>
-
 <section id="about">
   <div class="sec-head reveal">
     <span class="seg dir"> ~</span><span class="seg name">/about</span>
@@ -1406,6 +1505,9 @@ footer .heart{color:var(--red)}
 </div>
 
 <section id="contact" class="contact">
+  <div class="contact-bg" aria-hidden="true">
+    <video src="purple-desert.mp4" autoplay muted loop playsinline preload="metadata"></video>
+  </div>
   <div class="reveal">
     <p class="cmdline">❯ <span class="c-name">git</span> commit -m "let's build something"</p>
     <h2><span class="wclip"><span class="w">Have</span></span> <span class="wclip"><span class="w">a</span></span> <span class="wclip"><span class="w">project</span></span> <span class="wclip"><span class="w">in</span></span> <span class="wclip"><span class="w">mind?</span></span></h2>
@@ -1415,11 +1517,11 @@ footer .heart{color:var(--red)}
       <a class="btn btn-ghost" href="https://github.com/Arseph">GitHub / Arseph</a>
     </div>
   </div>
+  <footer class="contact-footer">
+    © 2026 Aron Joseph @ j2b — built with <span class="heart">♥</span> <a href="https://catppuccin.com" target="_blank" rel="noopener">Inspired By Catppuccin Theme</a>
+  </footer>
 </section>
 
-<footer>
-  © 2026 Aron Joseph @ j2b — built with <span class="heart">♥</span> <a href="https://catppuccin.com" target="_blank" rel="noopener">Inspired by Catppuccin Theme</a>
-</footer>
 
 <div class="cursor-ring" aria-hidden="true"></div>
 <div class="cursor-dot" aria-hidden="true"></div>
@@ -1431,93 +1533,6 @@ footer .heart{color:var(--red)}
   var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   var mx = innerWidth/2, my = innerHeight/2;
 
-  /* ================================================================
-     3D PARTICLE CONSTELLATION — rotating point cloud with depth
-     (runs on all devices; auto-rotates, follows mouse when present)
-  ================================================================ */
-  if (!reduced) (function(){
-    var cv = document.getElementById('bg3d');
-    if (!cv) return;
-    var ctx = cv.getContext('2d');
-    var W, H, CX, CY, dpr = Math.min(devicePixelRatio || 1, 2);
-    function size(){
-      W = cv.clientWidth; H = cv.clientHeight;
-      cv.width = W * dpr; cv.height = H * dpr;
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      CX = W/2; CY = H/2;
-    }
-    size();
-    addEventListener('resize', size, {passive:true});
-
-    var COLORS = [], LINE = '108,112,134';
-    function loadColors(){
-      var cs = getComputedStyle(document.documentElement);
-      COLORS = ['--mauve-rgb','--blue-rgb','--teal-rgb','--green-rgb','--lavender-rgb']
-        .map(function(v){ return cs.getPropertyValue(v).trim() || '203,166,247'; });
-      LINE = cs.getPropertyValue('--overlay-rgb').trim() || LINE;
-    }
-    loadColors();
-    document.addEventListener('themechange', loadColors);
-    var N = Math.min(110, Math.floor(innerWidth / 12));
-    var R = 520;                       // cloud radius
-    var FOV = 640;                     // perspective strength
-    var pts = [];
-    for (var i = 0; i < N; i++){
-      pts.push({
-        x:(Math.random()*2-1)*R,
-        y:(Math.random()*2-1)*R*0.62,
-        z:(Math.random()*2-1)*R,
-        c:(Math.random()*5)|0,
-        s:Math.random()*1.6+0.8
-      });
-    }
-
-    var rotY = 0, rotX = 0, tgtY = 0, tgtX = 0;
-    function frame(t){
-      // base auto-rotation + eased mouse influence
-      tgtY = (mx/innerWidth  - 0.5) * 0.55;
-      tgtX = (my/innerHeight - 0.5) * 0.35;
-      rotY += ((t*0.00006 + tgtY) - rotY) * 0.03;
-      rotX += (tgtX - rotX) * 0.03;
-
-      var cy = Math.cos(rotY), sy = Math.sin(rotY);
-      var cx = Math.cos(rotX), sx = Math.sin(rotX);
-      ctx.clearRect(0, 0, W, H);
-
-      var proj = [];
-      for (var i = 0; i < N; i++){
-        var p = pts[i];
-        var x1 = p.x*cy - p.z*sy, z1 = p.x*sy + p.z*cy;   // rotate Y
-        var y1 = p.y*cx - z1*sx,  z2 = p.y*sx + z1*cx;    // rotate X
-        var f = FOV / (FOV + z2 + R);                     // keep in front
-        proj.push({x:CX + x1*f, y:CY + y1*f, f:f, c:COLORS[p.c], s:p.s});
-      }
-      // constellation lines between near points
-      for (i = 0; i < N; i++){
-        for (var j = i+1; j < N; j++){
-          var a = proj[i], b = proj[j];
-          var dx = a.x-b.x, dy = a.y-b.y, d2 = dx*dx + dy*dy;
-          if (d2 < 12000){
-            ctx.strokeStyle = 'rgba(' + LINE + ',' + (0.20 * (1 - d2/12000) * a.f) + ')';
-            ctx.lineWidth = 1;
-            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
-          }
-        }
-      }
-      // depth-shaded dots
-      for (i = 0; i < N; i++){
-        var q = proj[i];
-        ctx.fillStyle = 'rgba(' + q.c + ',' + (0.16 + q.f*0.45) + ')';
-        ctx.beginPath();
-        ctx.arc(q.x, q.y, q.s * q.f * 1.8, 0, 6.2832);
-        ctx.fill();
-      }
-      requestAnimationFrame(frame);
-    }
-    requestAnimationFrame(frame);
-  })();
-
-
   /* ---- catppuccin pet: roams the background, chases the mouse,
           darts to new spots while scrolling, plays & naps when idle ---- */
   if (!reduced) (function(){
@@ -1528,6 +1543,7 @@ footer .heart{color:var(--red)}
     var tx = x, ty = y;
     var pmx = -1, pmy = -1, lastMouseT = 0, lastScrollT = 0, lastActive = performance.now();
     var roamUntil = 0, playUntil = 0, nextPlay = performance.now() + 5000;
+    var asleep = false;
 
     function clampT(){
       tx = Math.max(4, Math.min(innerWidth  - PW - 4, tx));
@@ -1540,23 +1556,37 @@ footer .heart{color:var(--red)}
     }
 
     addEventListener('mousemove', function(e){
+      if (asleep) return;
       pmx = e.clientX; pmy = e.clientY;
       lastMouseT = lastActive = performance.now();
     }, {passive:true});
 
-    // touch: dragging a finger lets the cat chase it, like the mouse
+    // touch: dragging a finger lets the cat chase it, like the mouse —
+    // but only when the drag isn't scrolling the page
+    var lastScrollEvt = 0;
     addEventListener('touchmove', function(e){
+      if (asleep) return;
       if (e.touches && e.touches[0]){
-        pmx = e.touches[0].clientX; pmy = e.touches[0].clientY;
-        lastMouseT = lastActive = performance.now();
+        var now = performance.now();
+        lastActive = now;
+        if (now - lastScrollEvt > 350){
+          pmx = e.touches[0].clientX; pmy = e.touches[0].clientY;
+          lastMouseT = now;
+        }
       }
     }, {passive:true});
 
+    var lastDartY = scrollY;
     addEventListener('scroll', function(){
+      if (asleep) return;
       var now = performance.now();
       lastActive = now;
-      // each scroll burst sends the cat darting to a new spot
-      if (now - lastScrollT > 350) randSpot();
+      lastScrollEvt = now;
+      // dart only on a genuine new scroll burst that moved a real distance
+      if (now - lastScrollT > 600 && Math.abs(scrollY - lastDartY) > 40){
+        randSpot();
+        lastDartY = scrollY;
+      }
       lastScrollT = now;
       roamUntil = now + 900;
     }, {passive:true});
@@ -1567,6 +1597,33 @@ footer .heart{color:var(--red)}
     var dashUntil = 0, clickChase = false;
     addEventListener('click', function(e){
       var now = performance.now();
+      if (asleep){
+        var pad = 18;
+        if (e.clientX >= x - pad && e.clientX <= x + PW + pad &&
+            e.clientY >= y - pad && e.clientY <= y + PH + pad){
+          // woken by touch: shocked jolt, then back to normal
+          lastActive = lastMouseT = now;
+          pmx = e.clientX; pmy = e.clientY;
+          playUntil = now + 1000;
+          nextPlay = now + 6000;
+          pet.classList.remove('sleep');
+          pet.classList.add('shock');
+          setTimeout(function(){ pet.classList.remove('shock'); }, 1000);
+        }
+        return;
+      }
+      if (e.target.closest && e.target.closest('a,button')) return;
+      if (now - lastScrollEvt < 300) return;
+      // touching the cat while awake startles it too
+      var pad2 = 14;
+      if (e.clientX >= x - pad2 && e.clientX <= x + PW + pad2 &&
+          e.clientY >= y - pad2 && e.clientY <= y + PH + pad2){
+        playUntil = now + 1000;
+        lastActive = now;
+        pet.classList.add('shock');
+        setTimeout(function(){ pet.classList.remove('shock'); }, 1000);
+        return;
+      }
       tx = e.clientX - PW * 0.5;
       ty = e.clientY - PH * 0.6;
       clampT();
@@ -1590,11 +1647,31 @@ footer .heart{color:var(--red)}
         clampT();
       }
 
+      var idleFor = now - lastActive;
+
+      // settled: after a few quiet seconds, pin the target to where the cat
+      // stands so it dozes exactly at its last position
+      if (idleFor > 4000 && now > roamUntil){
+        tx = x; ty = y;
+      }
+
+      // asleep at 12s — it stays put at its last position for a moment,
+      // then from 15s it slowly floats upward, stopping below the nav
+      var sleeping = idleFor > 12000 && now > roamUntil && now >= playUntil;
+      if (sleeping){
+        if (idleFor > 15000) y = Math.max(96, y - 0.22);
+        tx = x; ty = y;
+      }
+
       var dx = tx - x, dy = ty - y;
       var dist = Math.hypot(dx, dy);
       var speed = now < dashUntil ? 0.16 : (now < roamUntil ? 0.10 : 0.055);
       x += dx * speed;
       y += dy * speed;
+
+      // hard clamp: the cat can never leave the visible screen
+      x = Math.min(Math.max(x, 4), innerWidth  - PW - 4);
+      y = Math.min(Math.max(y, 4), innerHeight - PH - 4);
 
       var walking = dist > 8;
       pet.classList.toggle('dash', walking && (now < dashUntil || dist > 220));
@@ -1614,11 +1691,11 @@ footer .heart{color:var(--red)}
       var lean = Math.max(-14, Math.min(14, dy * speed * 6));
       pet.style.transform = 'translate(' + x + 'px,' + y + 'px) rotate(' + lean + 'deg)';
 
-      var idleFor = now - lastActive;
       var playing = now < playUntil;
 
       pet.classList.toggle('walk', walking);
-      pet.classList.toggle('sleep', !walking && !playing && idleFor > 12000);
+      asleep = !walking && !playing && idleFor > 12000;
+      pet.classList.toggle('sleep', asleep);
 
       // pounce at the cursor when it has caught up and you linger
       if (!walking && !playing && idleFor > 900 && idleFor < 12000 && now > nextPlay){
@@ -1763,6 +1840,282 @@ footer .heart{color:var(--red)}
       ticking = false;
     });
   }, {passive:true});
+})();
+</script>
+
+
+<script type="module">
+// WebGL starfield background — merged from the user's Three.js scene,
+// adapted to the Catppuccin theme system and the existing #bg3d canvas.
+if (!matchMedia('(prefers-reduced-motion: reduce)').matches) (async () => {
+try {
+  const THREE = await import('three');
+  const { EffectComposer } = await import('three/addons/postprocessing/EffectComposer.js');
+  const { RenderPass } = await import('three/addons/postprocessing/RenderPass.js');
+  const { ShaderPass } = await import('three/addons/postprocessing/ShaderPass.js');
+
+  const CONFIG = {
+    flameAmt: 0.16,
+    opacity: 1.7,
+    pointSize: 44,
+    brightness: 1.7,
+    drift: 1.8,
+    twinkle: 1,
+    spin: 0.03,
+    repelRadius: 5,
+    repelStrength: 0.35,
+    scrollPush: 7,
+    scrollDrift: 5,
+    scrollSpin: 0.08,
+    parallax: 0.6
+  };
+
+  function cssHexToVec3(name){
+    const hex = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    const n = parseInt(hex.slice(1), 16);
+    return new THREE.Vector3(((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255);
+  }
+
+  const canvas = document.getElementById('bg3d');
+  if (!canvas) return;
+  const renderer = new THREE.WebGL1Renderer({ canvas, antialias: true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.1, 80);
+  camera.position.set(0, 0, 5);
+  scene.add(camera);
+
+  const count = innerWidth < 700 ? 1600 : 4200;
+  const depth = 30;
+  const positions = new Float32Array(count * 3);
+  const palette = new Float32Array(count);
+  const bright = new Float32Array(count);
+  const scales = new Float32Array(count);
+  const phases = new Float32Array(count);
+  for (let i = 0; i < count; i++){
+    const i3 = i * 3;
+    positions[i3] = (Math.random() - 0.5) * 24;
+    positions[i3 + 1] = (Math.random() - 0.5) * 16;
+    positions[i3 + 2] = (Math.random() - 0.5) * 30;
+    palette[i] = Math.floor(Math.random() * 3);
+    bright[i] = 0.7 + Math.random() * 0.6;
+    scales[i] = 0.5 + Math.pow(Math.random(), 1.4) * 2.5;
+    phases[i] = Math.random();
+  }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  geometry.setAttribute('aScale', new THREE.Float32BufferAttribute(scales, 1));
+  geometry.setAttribute('aPhase', new THREE.Float32BufferAttribute(phases, 1));
+  geometry.setAttribute('aPalette', new THREE.Float32BufferAttribute(palette, 1));
+  geometry.setAttribute('aBright', new THREE.Float32BufferAttribute(bright, 1));
+
+  const material = new THREE.ShaderMaterial({
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    uniforms: {
+      uTime: { value: 0 },
+      uSize: { value: CONFIG.pointSize },
+      uOpacity: { value: 0 },
+      uDrift: { value: 0 },
+      uDepth: { value: depth },
+      uTwinkle: { value: CONFIG.twinkle },
+      uCursor: { value: new THREE.Vector3() },
+      uRepelRadius: { value: CONFIG.repelRadius },
+      uRepelStrength: { value: CONFIG.repelStrength },
+      uActivity: { value: 0 },
+      uColorA: { value: cssHexToVec3('--mauve') },
+      uColorB: { value: cssHexToVec3('--blue') },
+      uColorC: { value: cssHexToVec3('--lavender') },
+      uBrightness: { value: CONFIG.brightness }
+    },
+    vertexShader: `
+uniform float uTime; uniform float uSize; uniform float uDrift; uniform float uDepth; uniform float uTwinkle;
+uniform vec3 uCursor; uniform float uRepelRadius; uniform float uRepelStrength; uniform float uActivity;
+attribute float aScale; attribute float aPhase; attribute float aPalette; attribute float aBright;
+uniform vec3 uColorA; uniform vec3 uColorB; uniform vec3 uColorC;
+varying vec3 vColor; varying float vTwinkle;
+void main() {
+  vec3 pos = position;
+  pos.z = mod(pos.z + uDrift + (uDepth * 0.5), uDepth) - (uDepth * 0.5);
+  float tw = sin(uTime * 1.6 + aPhase * 6.2831);
+  vTwinkle = (1.0 - uTwinkle) + uTwinkle * (0.55 + 0.45 * tw);
+  vec4 modelPosition = modelMatrix * vec4(pos, 1.0);
+  vec3 toParticle = modelPosition.xyz - uCursor;
+  float dist = length(toParticle);
+  float falloff = smoothstep(uRepelRadius, 0.0, dist);
+  modelPosition.xyz += normalize(toParticle + vec3(0.0001)) * falloff * uRepelStrength * uActivity;
+  vec4 viewPosition = viewMatrix * modelPosition;
+  gl_Position = projectionMatrix * viewPosition;
+  gl_PointSize = uSize * aScale;
+  gl_PointSize *= (1.0 / -viewPosition.z);
+  vec3 base = aPalette < 0.5 ? uColorA : (aPalette < 1.5 ? uColorB : uColorC);
+  vColor = base * aBright;
+}
+`,
+    fragmentShader: `
+uniform float uOpacity; uniform float uBrightness;
+varying vec3 vColor; varying float vTwinkle;
+void main() {
+  vec2 uv = gl_PointCoord - 0.5;
+  float d = length(uv);
+  if (d > 0.5) discard;
+  float strength = pow(1.0 - d * 2.0, 4.0);
+  vec3 color = mix(vec3(0.0), vColor, strength);
+  gl_FragColor = vec4(color * uBrightness, strength * uOpacity * vTwinkle);
+}
+`
+  });
+
+  const points = new THREE.Points(geometry, material);
+  const group = new THREE.Group();
+  group.add(points);
+  scene.add(group);
+
+  // 1x1 black stub for the unused composer textures from the original scene
+  const black = new THREE.DataTexture(new Uint8Array([0,0,0,255]), 1, 1);
+  black.needsUpdate = true;
+
+  const finalPass = new ShaderPass(new THREE.ShaderMaterial({
+    uniforms: {
+      iTime: { value: 0 },
+      tDiffuse: { value: null },
+      bloomTexture: { value: black },
+      torusTexture: { value: black },
+      haloTexture: { value: black },
+      uBg: { value: cssHexToVec3('--base') },
+      uFlameA: { value: cssHexToVec3('--blue') },
+      uFlameB: { value: cssHexToVec3('--mauve') },
+      uFlameAmt: { value: CONFIG.flameAmt }
+    },
+    vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position, 1.0); }`,
+    fragmentShader: `
+uniform float iTime; uniform sampler2D tDiffuse; uniform sampler2D bloomTexture; uniform sampler2D torusTexture; uniform sampler2D haloTexture;
+uniform vec3 uBg; uniform vec3 uFlameA; uniform vec3 uFlameB; uniform float uFlameAmt;
+varying vec2 vUv;
+vec3 warp3d(vec3 pos, float t){ float curv=.8,a=1.9,b=0.7; pos*=2.;
+  pos.x+=curv*sin(t+a*pos.y)+t*b; pos.y+=curv*cos(t+a*pos.x);
+  pos.y+=curv*sin(t+a*pos.z)+t*b; pos.z+=curv*cos(t+a*pos.y);
+  pos.z+=curv*sin(t+a*pos.x)+t*b; pos.x+=curv*cos(t+a*pos.z);
+  return 0.5+0.5*cos(pos.xyz+vec3(1,2,4)); }
+void main(){
+  vec2 uv = 2.*vUv - 1.;
+  vec3 w = pow(warp3d(vec3(uv.x, sin(uv.y), uv.y), iTime*1.5), vec3(1.5));
+  vec3 flame = 1.5*uFlameA*w.x; flame*=w.y; flame += uFlameB*w.z;
+  flame *= smoothstep(0.25, 1., abs(uv.y));
+  float md = smoothstep(-0.7, 1., -uv.y*uv.x); flame *= md*md;
+  vec3 bg = uBg * (1.0 - 0.4 * length(uv));
+  vec3 halo = texture2D(haloTexture, vUv).xyz;
+  gl_FragColor = vec4(bg + flame*uFlameAmt + texture2D(bloomTexture, vUv).xyz + texture2D(torusTexture, vUv).xyz + texture2D(tDiffuse, vUv).xyz + halo, 1.);
+}
+`
+  }), 'tDiffuse');
+
+  const finalComposer = new EffectComposer(renderer);
+  finalComposer.addPass(new RenderPass(scene, camera));
+  finalComposer.addPass(finalPass);
+
+  // theme sync — starfield and nebula recolor with the Catppuccin flavor
+  function applyTheme(){
+    material.uniforms.uColorA.value = cssHexToVec3('--mauve');
+    material.uniforms.uColorB.value = cssHexToVec3('--blue');
+    material.uniforms.uColorC.value = cssHexToVec3('--lavender');
+    finalPass.uniforms.uBg.value = cssHexToVec3('--base');
+    finalPass.uniforms.uFlameA.value = cssHexToVec3('--blue');
+    finalPass.uniforms.uFlameB.value = cssHexToVec3('--mauve');
+  }
+  applyTheme();
+  document.addEventListener('themechange', applyTheme);
+
+  const POINTER = { ndc: new THREE.Vector2(0,0), world: new THREE.Vector3(), active:false, activity:0, lastMove: performance.now() };
+  addEventListener('mousemove', (e) => {
+    POINTER.ndc.x = (e.clientX / innerWidth) * 2 - 1;
+    POINTER.ndc.y = -((e.clientY / innerHeight) * 2 - 1);
+    POINTER.active = true;
+    POINTER.lastMove = performance.now();
+  }, { passive:true });
+  addEventListener('touchmove', (e) => {
+    if (e.touches && e.touches[0]){
+      POINTER.ndc.x = (e.touches[0].clientX / innerWidth) * 2 - 1;
+      POINTER.ndc.y = -((e.touches[0].clientY / innerHeight) * 2 - 1);
+      POINTER.active = true;
+      POINTER.lastMove = performance.now();
+    }
+  }, { passive:true });
+  addEventListener('mouseout', () => { POINTER.active = false; });
+
+  const target = new THREE.Vector3();
+  function updatePointer(){
+    if (POINTER.active){
+      const v = new THREE.Vector3(POINTER.ndc.x, POINTER.ndc.y, 0.5).unproject(camera);
+      const dir = v.sub(camera.position).normalize();
+      let hit = false;
+      if (Math.abs(dir.z) > 1e-4){
+        const t = -camera.position.z / dir.z;
+        if (t > 0 && Number.isFinite(t)){ target.copy(camera.position).addScaledVector(dir, t); hit = true; }
+      }
+      if (!hit) target.set(0,0,0);
+    } else target.set(0,0,0);
+    POINTER.world.lerp(target, 0.12);
+    const idle = (performance.now() - POINTER.lastMove) / 1000;
+    const want = (POINTER.active && idle < 3) ? 1 : 0;
+    POINTER.activity += (want - POINTER.activity) * 0.06;
+    material.uniforms.uCursor.value.copy(POINTER.world);
+    material.uniforms.uActivity.value = POINTER.activity;
+  }
+
+  let scrollTarget = 0, scrollSmooth = 0, scrollCurrent = 0;
+  const mouseSmooth = { x:0, y:0 };
+  function readScroll(){
+    const max = document.documentElement.scrollHeight - innerHeight;
+    scrollTarget = max > 0 ? Math.min(1, Math.max(0, scrollY / max)) : 0;
+  }
+  addEventListener('scroll', readScroll, { passive:true });
+  readScroll();
+
+  const appearStart = performance.now();
+  let t0 = performance.now() / 1000;
+
+  function animate(){
+    requestAnimationFrame(animate);
+    const t = performance.now() / 1000;
+    const dt = Math.min(0.05, t - t0);
+    t0 = t;
+
+    scrollSmooth += (scrollTarget - scrollSmooth) * 0.10;
+    scrollCurrent += (scrollSmooth - scrollCurrent) * 0.06;
+    mouseSmooth.x += (POINTER.ndc.x - mouseSmooth.x) * 0.06;
+    mouseSmooth.y += (POINTER.ndc.y - mouseSmooth.y) * 0.06;
+    updatePointer();
+
+    finalPass.uniforms.iTime.value = t;
+    material.uniforms.uTime.value = t;
+    material.uniforms.uDrift.value += dt * (CONFIG.drift + scrollCurrent * CONFIG.scrollDrift);
+    camera.position.set(mouseSmooth.x * CONFIG.parallax, mouseSmooth.y * CONFIG.parallax, 5 - scrollCurrent * CONFIG.scrollPush);
+    camera.lookAt(mouseSmooth.x * CONFIG.parallax, mouseSmooth.y * CONFIG.parallax, -10);
+    const fade = Math.min(1, Math.max(0, (performance.now() - appearStart - 300) / 1400));
+    material.uniforms.uOpacity.value = fade * CONFIG.opacity;
+    group.rotation.z += dt * (CONFIG.spin + scrollCurrent * CONFIG.scrollSpin);
+
+    finalComposer.render();
+  }
+  animate();
+
+  addEventListener('resize', () => {
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    finalComposer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    finalComposer.setSize(w, h);
+    readScroll();
+  }, { passive:true });
+} catch (err) {
+  console.warn('WebGL starfield unavailable:', err);
+}
 })();
 </script>
 
