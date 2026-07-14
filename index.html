@@ -1155,6 +1155,25 @@ footer .heart{color:var(--red)}
   .line{width:100% !important}
   .reveal-out,.p2,.p3,.cursor{opacity:1}
 }
+/* ---- typewriter scroll reveal ---- */
+.tw .tc{display:inline-block;opacity:0}
+.tw .tc.show{opacity:1}
+.tw-caret{
+  display:inline-block;
+  width:2px;height:.9em;
+  background:var(--mauve);
+  margin-left:2px;
+  vertical-align:-0.05em;
+  opacity:0;
+}
+.tw.typing .tw-caret{opacity:1;animation:caretBlink .9s steps(1) infinite}
+.tw.done .tw-caret{opacity:0;transition:opacity .4s ease .3s}
+@keyframes caretBlink{0%,100%{opacity:1}50%{opacity:0}}
+
+@media (prefers-reduced-motion: reduce){
+  .tw .tc{opacity:1}
+  .tw-caret{display:none}
+}
 </style>
 <script type="importmap">
 {
@@ -2118,6 +2137,74 @@ void main(){
 }
 })();
 </script>
+<script>
+(function(){
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
+  // splits an element's text into one <span class="tc"> per character,
+  // preserving nested tags (like <strong>), and skips the gradient span
+  // so the hero's background-clip:text effect stays intact
+  function splitChars(el){
+    if (el.dataset.twsplit) return;
+    el.dataset.twsplit = '1';
+    el.classList.add('tw');
+
+    function walk(node){
+      Array.from(node.childNodes).forEach(function(child){
+        if (child.nodeType === 3){ // text node
+          var frag = document.createDocumentFragment();
+          child.textContent.split('').forEach(function(ch){
+            var span = document.createElement('span');
+            span.className = 'tc';
+            span.textContent = ch === ' ' ? '\u00A0' : ch;
+            frag.appendChild(span);
+          });
+          child.replaceWith(frag);
+        } else if (child.nodeType === 1 && !child.classList.contains('grad')){
+          walk(child);
+        }
+      });
+    }
+    walk(el);
+
+    var caret = document.createElement('span');
+    caret.className = 'tw-caret';
+    el.appendChild(caret);
+  }
+
+  // pick which elements get the typing effect
+  var targets = document.querySelectorAll(
+    '.sec-head h2, .card h3, .tl-item h3, .hero-sub, .about-grid > div:nth-child(2) p'
+  );
+  targets.forEach(splitChars);
+
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if (!entry.isIntersecting) return;
+      io.unobserve(entry.target);
+
+      var el = entry.target;
+      var chars = el.querySelectorAll('.tc');
+      el.classList.add('typing');
+
+      var i = 0;
+      // faster for long paragraphs, slower for short headings, capped both ways
+      var speed = Math.max(14, Math.min(38, 900 / chars.length));
+      var timer = setInterval(function(){
+        if (i >= chars.length){
+          clearInterval(timer);
+          el.classList.remove('typing');
+          el.classList.add('done');
+          return;
+        }
+        chars[i].classList.add('show');
+        i++;
+      }, speed);
+    });
+  }, { threshold: 0.2, rootMargin: '0px 0px -10% 0px' });
+
+  targets.forEach(function(el){ io.observe(el); });
+})();
+</script>
 </body>
 </html>
